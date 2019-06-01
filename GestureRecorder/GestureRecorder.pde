@@ -324,37 +324,37 @@ void updateAndDrawCountdownTimer() {
 /**
  * Called automatically when a key is pressed. We use this to capture the spacebar keypress (used to start/stop)
  */
-//void keyPressed() {
-//  if (key == ' ') { 
-//    if (_recordingGesture) {
-//      // save gesture!
-//      _recordingGesture = false;
-//      _timestampStartCountdownMs = -1;
-//      long currentTimestampMs = System.currentTimeMillis();
-//      GestureRecording curGestureRecording = _gestureRecordings.get(_gestureRecordings.size() - 1);
-//      curGestureRecording.endTimestamp = currentTimestampMs;
-//      curGestureRecording.save();
+void keyPressed() {
+  if (key == ' ') { 
+    if (_recordingGesture) {
+      // save gesture!
+      _recordingGesture = false;
+      _timestampStartCountdownMs = -1;
+      long currentTimestampMs = System.currentTimeMillis();
+      GestureRecording curGestureRecording = _gestureRecordings.get(_gestureRecordings.size() - 1);
+      curGestureRecording.endTimestamp = currentTimestampMs;
+      curGestureRecording.save();
       
-//      if(!_mapGestureNameToRecordedCount.containsKey(curGestureRecording.name)){ //<>//
-//        _mapGestureNameToRecordedCount.put(curGestureRecording.name, 1);
-//      }else{
-//        int curRecordingCntForGesture = (int)_mapGestureNameToRecordedCount.get(curGestureRecording.name);
-//        int newRecordingCntForGesture = curRecordingCntForGesture + 1;
-//        _mapGestureNameToRecordedCount.put(curGestureRecording.name, newRecordingCntForGesture);
+      if(!_mapGestureNameToRecordedCount.containsKey(curGestureRecording.name)){ //<>//
+        _mapGestureNameToRecordedCount.put(curGestureRecording.name, 1);
+      }else{
+        int curRecordingCntForGesture = (int)_mapGestureNameToRecordedCount.get(curGestureRecording.name);
+        int newRecordingCntForGesture = curRecordingCntForGesture + 1;
+        _mapGestureNameToRecordedCount.put(curGestureRecording.name, newRecordingCntForGesture);
         
-//        if(newRecordingCntForGesture >= NUM_SAMPLES_TO_RECORD_PER_GESTURE){
-//           _curGestureIndex++; 
-//        }
-//      }
+        if(newRecordingCntForGesture >= NUM_SAMPLES_TO_RECORD_PER_GESTURE){
+           _curGestureIndex++; 
+        }
+      }
        
-//    } else {
-//      if(_curGestureIndex < GESTURES.length){
-//        // if there are still gestures left to record, start countdown timer
-//        _timestampStartCountdownMs = System.currentTimeMillis();
-//      }
-//    }
-//  }
-//}
+    } else {
+      if(_curGestureIndex < GESTURES.length){
+        // if there are still gestures left to record, start countdown timer
+        _timestampStartCountdownMs = System.currentTimeMillis();
+      }
+    }
+  }
+}
 
 /**
  * Convenience method that returns the number of gestures recoreded with the given name
@@ -385,11 +385,7 @@ void serialEvent (Serial myPort) {
         data = new int[] { int(inString) };
       }
 
-      AccelSensorData accelSensorData = new AccelSensorData(currentTimestampMs, data[0], data[2], data[3], data[4]);
-      
-      if (data[1] == 1) {
-        _recordingGesture = true;
-      }
+      AccelSensorData accelSensorData = new AccelSensorData(currentTimestampMs, data[0], data[1], data[2], data[3]);
       
       if(_recordingGesture){
         GestureRecording curGestureRecording = _gestureRecordings.get(_gestureRecordings.size() - 1);

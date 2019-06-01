@@ -15,7 +15,6 @@
 const int ACCELX_INPUT = A0; // accel x is hooked up to A0
 const int ACCELY_INPUT = A1; // accel y is hooked up to A0
 const int ACCELZ_INPUT = A2; // accel z is hooked up to A0
-const int buttonPin = 2;     // Button input
 
 void setup() {
   Serial.begin(9600); // to print values to the screen
@@ -26,8 +25,7 @@ void loop() {
   // the timestamp is the number of milliseconds since bootup
   // it must be an unsigned long (or risk overflow)
   unsigned long arduinoTimestamp = millis(); // https://www.arduino.cc/reference/en/language/functions/time/millis/
-
-  int buttonVal = digitalRead(buttonPin);
+  
   int accelX = analogRead(ACCELX_INPUT);
   delay(1); // recall that we want to delay by 1ms between consecutive analogReads
   int accelY = analogRead(ACCELY_INPUT);
