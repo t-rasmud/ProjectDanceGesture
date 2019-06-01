@@ -35,16 +35,18 @@ void loop() {
   int accelZ = analogRead(ACCELZ_INPUT);
 
   // Print values to serial
-  Serial.print(arduinoTimestamp);
-  Serial.print(",");
-  Serial.print(buttonVal);
-  Serial.print(",");
-  Serial.print(accelX);
-  Serial.print(",");
-  Serial.print(accelY);
-  Serial.print(",");
-  Serial.print(accelZ);
-  Serial.println();
+  if (buttonVal == HIGH) {
+    Serial.print(arduinoTimestamp);
+    Serial.print(",");
+    Serial.print(buttonVal);
+    Serial.print(",");
+    Serial.print(accelX);
+    Serial.print(",");
+    Serial.print(accelY);
+    Serial.print(",");
+    Serial.print(accelZ);
+    Serial.println();
+  }
 
   delay(10);
 }
