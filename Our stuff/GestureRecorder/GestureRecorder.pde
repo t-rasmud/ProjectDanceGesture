@@ -43,7 +43,7 @@ final int ARDUINO_SERIAL_PORT_INDEX = 3; // our serial port index
 
 final int NUM_SAMPLES_TO_RECORD_PER_GESTURE = 5;
 
-final String [] GESTURES = { "Move 1", "Move 2" };
+final String [] GESTURES = { "Dab", "Floss", "Robot", "Single Ladies", "Arm Wave" };
 int _curGestureIndex = 0;
 HashMap<String, Integer> _mapGestureNameToRecordedCount = new HashMap<String, Integer>(); // tracks recorded gesture counts
 ArrayList<AccelSensorData> _displaySensorData =  new ArrayList<AccelSensorData>(); // sensor data displayed to screen
@@ -335,7 +335,7 @@ void keyPressed() {
       curGestureRecording.endTimestamp = currentTimestampMs;
       curGestureRecording.save();
       
-      if(!_mapGestureNameToRecordedCount.containsKey(curGestureRecording.name)){ //<>//
+      if(!_mapGestureNameToRecordedCount.containsKey(curGestureRecording.name)){ //<>// //<>//
         _mapGestureNameToRecordedCount.put(curGestureRecording.name, 1);
       }else{
         int curRecordingCntForGesture = (int)_mapGestureNameToRecordedCount.get(curGestureRecording.name);
