@@ -43,7 +43,7 @@ final int ARDUINO_SERIAL_PORT_INDEX = 3; // our serial port index
 
 final int NUM_SAMPLES_TO_RECORD_PER_GESTURE = 5;
 
-final String [] GESTURES = { "Dont pay Attention", "Flip", "Clap", "Elephant Arm" };
+final String [] GESTURES = { "Elephant Arm" };
 int _curGestureIndex = 0;
 HashMap<String, Integer> _mapGestureNameToRecordedCount = new HashMap<String, Integer>(); // tracks recorded gesture counts
 ArrayList<AccelSensorData> _displaySensorData =  new ArrayList<AccelSensorData>(); // sensor data displayed to screen
@@ -126,7 +126,7 @@ void draw() {
     AccelSensorData lastAccelSensorData = _displaySensorData.get(i - 1);
     AccelSensorData curAccelSensorData = _displaySensorData.get(i);
 
-    drawSensorLine(XCOLOR, lastAccelSensorData.timestamp, lastAccelSensorData.x, curAccelSensorData.timestamp, curAccelSensorData.x);
+    drawSensorLine(XCOLOR,  lastAccelSensorData.timestamp, lastAccelSensorData.x, curAccelSensorData.timestamp, curAccelSensorData.x);
     drawSensorLine(YCOLOR, lastAccelSensorData.timestamp, lastAccelSensorData.y, curAccelSensorData.timestamp, curAccelSensorData.y);
     drawSensorLine(ZCOLOR, lastAccelSensorData.timestamp, lastAccelSensorData.z, curAccelSensorData.timestamp, curAccelSensorData.z);
   }
