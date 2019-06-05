@@ -59,7 +59,7 @@ class AccelPlot:
         self.window_length = 30
         self.window_step = 10
         self.window_buffer = deque()
-        self.current_event = None #tuple (time list, mag list, x list, y list, z list)
+        self.current_event = None #tuple (time list, val list)
 
     def __add_to_buffer(self, buf, val):
         if len(buf) < self.max_length:
@@ -74,13 +74,10 @@ class AccelPlot:
         self.__add_to_buffer(self.x, csv_data[AccelPlot.ARDUINO_CSV_INDEX_X])
         self.__add_to_buffer(self.y, csv_data[AccelPlot.ARDUINO_CSV_INDEX_Y])
         self.__add_to_buffer(self.z, csv_data[AccelPlot.ARDUINO_CSV_INDEX_Z])
-        xval = csv_data[AccelPlot.ARDUINO_CSV_INDEX_X]
-        yval = csv_data[AccelPlot.ARDUINO_CSV_INDEX_Y]
-        zval = csv_data[AccelPlot.ARDUINO_CSV_INDEX_Z]
         mag = math.sqrt(csv_data[AccelPlot.ARDUINO_CSV_INDEX_X] ** 2 + 
             csv_data[AccelPlot.ARDUINO_CSV_INDEX_Y] ** 2 + 
             csv_data[AccelPlot.ARDUINO_CSV_INDEX_Z]** 2) 
-        self.__add_to_buffer(self.mag, mag, self.x, xval, self.y, yval, self.z, zval)
+        self.__add_to_buffer(self.mag, mag)
 
         # add mag to window buffer used for segmentation
         self.window_buffer.append(mag)
@@ -106,9 +103,6 @@ class AccelPlot:
                 
                 t = list(itertools.islice(self.time, start_idx, end_idx))
                 s = list(itertools.islice(self.mag, start_idx, end_idx))
-                x_seg = list(itertools.islice(self.x, start_idx, end_idx))
-                y_seg = list(itertools.islice(self.y, start_idx, end_idx))
-                z_seg = list(itertools.islice(self.z, start_idx, end_idx))
 
                 self.ax.axvline(self.time[-self.window_length], ls='--', color='black', linewidth=1, alpha=0.8)
                 self.current_event = (t, s)
@@ -122,9 +116,6 @@ class AccelPlot:
                     
                     t = list(itertools.islice(self.time, start_idx, end_idx))
                     s = list(itertools.islice(self.mag, start_idx, end_idx))
-                    x_seg = list(itertools.islice(self.x, start_idx, end_idx))
-                    y_seg = list(itertools.islice(self.y, start_idx, end_idx))
-                    z_seg = list(itertools.islice(self.z, start_idx, end_idx))
 
                     self.current_event[0].extend(t)
                     self.current_event[1].extend(s)
