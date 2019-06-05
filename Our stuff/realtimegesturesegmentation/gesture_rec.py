@@ -80,7 +80,7 @@ class AccelPlot:
         mag = math.sqrt(csv_data[AccelPlot.ARDUINO_CSV_INDEX_X] ** 2 + 
             csv_data[AccelPlot.ARDUINO_CSV_INDEX_Y] ** 2 + 
             csv_data[AccelPlot.ARDUINO_CSV_INDEX_Z]** 2) 
-        self.__add_to_buffer(self.mag, mag, self.x, xval, self.y, yval, self.z, zval)
+        self.__add_to_buffer(self.mag, mag)
 
         # add mag to window buffer used for segmentation
         self.window_buffer.append(mag)
