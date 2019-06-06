@@ -1261,6 +1261,7 @@ class AccelPlot:
         return segment_result
     
     def classify_event(self, segment_result):
+        list_of_feature_vectors_event = []
 
         t = segment_result['time']
         x = segment_result['x']
@@ -1366,10 +1367,11 @@ class AccelPlot:
         features.append(feat_z_min)
         feature_names.append("z.min")       
 
-        list_of_feature_vectors.append(features)
+        list_of_feature_vectors_event.append(features)
         column_headers = feature_names
 
-        df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
+
+        df = pd.DataFrame(list_of_feature_vectors_event, columns = feature_names)
         trial_indices = df.pop("trial_num")
         X = df
         gesturer = df.pop('gesturer')
