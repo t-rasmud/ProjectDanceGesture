@@ -1306,7 +1306,7 @@ class AccelPlot:
         features.append("NAN")
         feature_names.append("gesturer")
             
-        features.append("unknown")
+        features.append("56")
         feature_names.append("gesture")
 
         features.append("101")
