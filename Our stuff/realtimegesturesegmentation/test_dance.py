@@ -1124,7 +1124,7 @@ class AccelPlot:
 
         self.scaler = scaler 
 
-        self.maxArrayLength
+        self.maxArrayLength = maxArrayLength
 
         self.model = model
 
@@ -1198,7 +1198,7 @@ class AccelPlot:
                 z_seg = list(itertools.islice(self.z, start_idx, end_idx))
 
                 # preprocess signal before classification and store in new arrays
-                x_p = list(preprocess(x_seg, max(self.maxArrayLength, len(x_seg)))
+                x_p = list(preprocess(x_seg, max(self.maxArrayLength, len(x_seg))))
                 y_p = list(preprocess(y_seg, max(self.maxArrayLength, len(y_seg))))
                 z_p = list(preprocess(z_seg, max(self.maxArrayLength, len(z_seg))))
                 mag_p = list(preprocess(s, max(self.maxArrayLength, len(s))))
