@@ -1104,7 +1104,7 @@ def train_whole_recorded_gestures():
     num_features_to_eliminate = 0
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
-    return selector
+    return (scaler, selector)
 
 # plot class
 class AccelPlot:
@@ -1115,12 +1115,16 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, str_port, scaler, model, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
         self.fig = fig
         self.ax = ax
+
+        self.scaler = scaler 
+
+        self.model = model
 
         self.data = list()
         num_values_to_plot = 4
@@ -1257,6 +1261,7 @@ class AccelPlot:
         return segment_result
     
     def classify_event(self, segment_result):
+
         t = segment_result['time']
         x = segment_result['x']
         y = segment_result['y']
@@ -1266,6 +1271,7 @@ class AccelPlot:
         y_p = segment_result['y_p']
         z_p = segment_result['z_p']
         mag_p = segment_result['mag_p']
+        # predicted_val = self.model.predict(segment_result)
         # print("classify event: x_p:")
         # print(segment_result['x_p'])
         # print("classify event: y_p:")
@@ -1291,6 +1297,87 @@ class AccelPlot:
         feat_y_max = np.array(y).max()
         feat_mag_min = np.array(mag).min()
         feat_z_min = np.array(z).min()
+
+        features = []
+        feature_names = []
+
+        # add in bookkeeping like gesture name and trial num
+        features.append("NAN")
+        feature_names.append("gesturer")
+            
+        features.append("unknown")
+        feature_names.append("gesture")
+
+        features.append("101")
+        feature_names.append("trial_num")
+
+        # length
+        features.append(feat_length)
+        feature_names.append("length")
+            
+        # mean
+        features.append(feat_x_p_mean)
+        feature_names.append("x_p.mean")
+        
+        # mean raw
+        features.append(feat_y_mean)
+        feature_names.append("y.mean")
+
+        features.append(feat_z_mean)
+        feature_names.append("z.mean")
+
+        # median
+        features.append(feat_x_p_median)
+        feature_names.append("x_p.median")
+
+        features.append(feat_z_p_median)
+        feature_names.append("z_p.median")
+
+        # var
+        features.append(feat_x_p_var)
+        feature_names.append("x_p.var")
+
+        features.append(feat_y_p_var)
+        feature_names.append("y_p.var")
+        
+        # var raw
+        features.append(feat_mag_var)
+        feature_names.append("mag.var")
+
+        features.append(feat_y_var)
+        feature_names.append("y.var")
+
+        # max
+
+        features.append(feat_y_p_var)
+        feature_names.append("y_p.max")
+        
+        #max raw
+        features.append(feat_mag_max)
+        feature_names.append("mag.max")
+
+        features.append(feat_y_max)
+        feature_names.append("y.max")
+        
+        # min raw
+        features.append(feat_mag_min)
+        feature_names.append("mag.min")
+
+        features.append(feat_z_min)
+        feature_names.append("z.min")       
+
+        list_of_feature_vectors.append(features)
+        column_headers = feature_names
+
+        df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
+        trial_indices = df.pop("trial_num")
+        X = df
+        gesturer = df.pop('gesturer')
+
+        transformed_x = self.scaler.transform(X)
+
+        result = self.model.predict(X)
+        print(result)
 
     # update plot
     def update(self, frameNum, args, plt_lines):
@@ -1330,9 +1417,14 @@ class AccelPlot:
 
 # main() function
 def main():
+    #get trained model
+    scaler, model = train_whole_recorded_gestures()
+
+
     # python serial_plotter.py --port /dev/cu.usbmodem14601
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
+
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
     # add expected arguments
@@ -1354,7 +1446,7 @@ def main():
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
     ax = plt.axes(ylim=(0, 1500))
 
-    accel_plot = AccelPlot(fig, ax, str_port, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, str_port, scaler, model, max_length=args.max_len)
 
     # set up animation
   
@@ -1383,5 +1475,4 @@ def main():
 
 # call main
 if __name__ == '__main__':
-    train_whole_recorded_gestures()
     main()
