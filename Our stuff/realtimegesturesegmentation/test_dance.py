@@ -800,6 +800,87 @@ def extract_features_from_gesture_set(gesture_set, include_custom_gesture=True,
             column_headers = feature_names
     return (list_of_feature_vectors, column_headers)
 
+
+# returns a tuple of (list of features, feature_names)
+def extract_features_from_gesture_set_hardcoded(gesture_set, include_custom_gesture=True, 
+                                      include_dummy_data=False, verbose=False):
+    list_of_feature_vectors = []
+    column_headers = []
+    for gesture_name in gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture):
+        gesture_trials = gesture_set.map_gestures_to_trials[gesture_name]
+        for trial in gesture_trials:
+            features = []
+            feature_names = []
+
+            # add in bookkeeping like gesture name and trial num
+            features.append(gesture_set.get_base_path())
+            feature_names.append("gesturer")
+            
+            features.append(gesture_name)
+            feature_names.append("gesture")
+
+            features.append(trial.trialNum)
+            feature_names.append("trial_num")
+
+            # length
+            features.append(len(trial.accel.mag))
+            feature_names.append("length")
+            
+            # mean
+            features.append(trial.accel.x_p.mean())
+            feature_names.append("x_p.mean")
+            
+            # mean raw
+            features.append(trial.accel.y.mean())
+            feature_names.append("y.mean")
+
+            features.append(trial.accel.z.mean())
+            feature_names.append("z.mean")
+
+            # median
+            features.append(np.median(trial.accel.x_p))
+            feature_names.append("x_p.median")
+
+            features.append(np.median(trial.accel.z_p))
+            feature_names.append("z_p.median")
+
+            # var
+            features.append(np.var(trial.accel.x_p))
+            feature_names.append("x_p.var")
+
+            features.append(np.var(trial.accel.y_p))
+            feature_names.append("y_p.var")
+            
+            # var raw
+            features.append(np.var(trial.accel.mag))
+            feature_names.append("mag.var")
+
+            features.append(np.var(trial.accel.y))
+            feature_names.append("y.var")
+
+            # max
+
+            features.append(trial.accel.y_p.max())
+            feature_names.append("y_p.max")
+            
+            #max raw
+            features.append(trial.accel.mag.max())
+            feature_names.append("mag.max")
+
+            features.append(trial.accel.y.max())
+            feature_names.append("y.max")
+            
+            # min raw
+            features.append(trial.accel.mag.min())
+            feature_names.append("mag.min")
+
+            features.append(trial.accel.z.min())
+            feature_names.append("z.min")       
+
+            list_of_feature_vectors.append(features)
+            column_headers = feature_names
+    return (list_of_feature_vectors, column_headers)
+
 # Feature selection using Recursive Feature Elimination (Nicole)
 # - See Section 4.7.3 of the Mueller book: 
 #     https://learning.oreilly.com/library/view/introduction-to-machine/9781449369880/ch04.html
@@ -994,6 +1075,36 @@ selector.fit(X_train_scaled, y_train)
 # plt.figure(figsize=(10,10))
 # plot_confusion_matrix(cm, classes=sorted_gesture_names, title="Scaled RFE test score: {:.3f}".format(score))
 # plt.show()
+
+def train_whole_recorded_gestures():
+    selected_gesture_set = get_gesture_set_with_str("Combined")
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set_hardcoded(selected_gesture_set,
+                                                                                include_dummy_data=True) 
+
+    df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
+    trial_indices = df.pop("trial_num")
+    X = df
+    y = df.pop('gesture')
+    gesturer = df.pop('gesturer')
+
+    # 100/0 split with stratification
+    # in this case, we have 5 gestures x 10 samples = 50 total
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0, stratify=y) # random_state=42
+    # print(y_test)
+    sorted_gesture_names = sorted(y_train.unique())
+
+    # Scale values
+    scaler = StandardScaler()
+    scaler.fit(X)
+    X_train_scaled = scaler.transform(X)
+    # X_test_scaled = scaler.transform(X_test)
+    clf = svm.SVC(kernel='linear')
+
+    # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
+    num_features_to_eliminate = 0
+    selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
+    selector.fit(X_train_scaled, y)
+    return selector
 
 # plot class
 class AccelPlot:
@@ -1270,7 +1381,7 @@ def main():
 
     print('Exiting...')
 
-
 # call main
 if __name__ == '__main__':
+    train_whole_recorded_gestures()
     main()
