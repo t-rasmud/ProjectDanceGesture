@@ -1104,7 +1104,11 @@ def train_whole_recorded_gestures_elim_features():
     num_features_to_eliminate = 15
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
-    return (scaler, selector)
+
+    X_train_scaled_again = selector.transform(X_train_scaled)
+
+    clf.fit(X_train_scaled_again, y)
+    return (scaler, selector, clf)
 
 def train_whole_recorded_gestures():
     selected_gesture_set = get_gesture_set_with_str("Combined")
@@ -1134,6 +1138,11 @@ def train_whole_recorded_gestures():
     num_features_to_eliminate = 0
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
+
+    mask = selector.get_support()
+    print(len(X_train_scaled[mask]), X_train_sacled.columns[mask])
+    print("eliminated vars", X_train_sacled.columns[~mask])
+
 
     X_train_scaled_again = selector.transform(X_train_scaled)
 
@@ -1460,12 +1469,15 @@ class AccelPlot:
 # main() function
 def main():
     #get trained model
-    scaler, model, clf = train_whole_recorded_gestures()
+    scaler, model, clf = train_whole_recorded_gestures_elim_features()
+    #scaler, model, clf = train_whole_recorded_gestures()
 
 
     # python serial_plotter.py --port /dev/cu.usbmodem14601
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
+
+    '''
 
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
@@ -1514,6 +1526,7 @@ def main():
     accel_plot.close()
 
     print('Exiting...')
+    '''
 
 # call main
 if __name__ == '__main__':
