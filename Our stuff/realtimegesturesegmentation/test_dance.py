@@ -1076,6 +1076,36 @@ selector.fit(X_train_scaled, y_train)
 # plot_confusion_matrix(cm, classes=sorted_gesture_names, title="Scaled RFE test score: {:.3f}".format(score))
 # plt.show()
 
+def train_whole_recorded_gestures_elim_features():
+    selected_gesture_set = get_gesture_set_with_str("Combined")
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
+                                                                                include_dummy_data=True) 
+
+    df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
+    trial_indices = df.pop("trial_num")
+    X = df
+    y = df.pop('gesture')
+    gesturer = df.pop('gesturer')
+
+    # 100/0 split with stratification
+    # in this case, we have 5 gestures x 10 samples = 50 total
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0, stratify=y) # random_state=42
+    # print(y_test)
+    sorted_gesture_names = sorted(y_train.unique())
+
+    # Scale values
+    scaler = StandardScaler()
+    scaler.fit(X)
+    X_train_scaled = scaler.transform(X)
+    # X_test_scaled = scaler.transform(X_test)
+    clf = svm.SVC(kernel='linear')
+
+    # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
+    num_features_to_eliminate = 15
+    selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
+    selector.fit(X_train_scaled, y)
+    return (scaler, selector)
+
 def train_whole_recorded_gestures():
     selected_gesture_set = get_gesture_set_with_str("Combined")
     (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set_hardcoded(selected_gesture_set,
@@ -1104,7 +1134,7 @@ def train_whole_recorded_gestures():
     num_features_to_eliminate = 0
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
-    return (scaler, selector)
+    return (scaler, selector, clf)
 
 # plot class
 class AccelPlot:
@@ -1115,7 +1145,7 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, model, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, selector, clf, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
@@ -1126,7 +1156,9 @@ class AccelPlot:
 
         self.maxArrayLength = maxArrayLength
 
-        self.model = model
+        self.selector = selector
+
+        self.clf = clf
 
         self.data = list()
         num_values_to_plot = 4
@@ -1380,7 +1412,9 @@ class AccelPlot:
 
         transformed_x = self.scaler.transform(X)
 
-        result = self.model.predict(X)
+        transform_x_again = self.selector.transform(transformed_x)
+
+        result = self.clf.predict(X)
         print(result)
 
     # update plot
@@ -1422,7 +1456,7 @@ class AccelPlot:
 # main() function
 def main():
     #get trained model
-    scaler, model = train_whole_recorded_gestures()
+    scaler, model, clf = train_whole_recorded_gestures()
 
 
     # python serial_plotter.py --port /dev/cu.usbmodem14601
@@ -1450,7 +1484,7 @@ def main():
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
     ax = plt.axes(ylim=(0, 1500))
 
-    accel_plot = AccelPlot(fig, ax, str_port, maxArrayLength, scaler, model, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, str_port, maxArrayLength, scaler, model, clf, max_length=args.max_len)
 
     # set up animation
   
