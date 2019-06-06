@@ -1374,6 +1374,7 @@ class AccelPlot:
         df = pd.DataFrame(list_of_feature_vectors_event, columns = feature_names)
         trial_indices = df.pop("trial_num")
         X = df
+        df.pop('gesture')
         gesturer = df.pop('gesturer')
 
         transformed_x = self.scaler.transform(X)
