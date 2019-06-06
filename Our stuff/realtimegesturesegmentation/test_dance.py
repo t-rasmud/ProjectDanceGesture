@@ -376,7 +376,7 @@ def parse_and_create_gesture_trials( path_to_dir ):
     print("Avg samples/sec across {} sensor files: {:0.1f}".format(len(listSamplesPerSec), sum(listSamplesPerSec)/len(listSamplesPerSec)))
     print("Avg sample length across {} sensor files: {:0.1f}s".format(len(listTotalSampleTime), sum(listTotalSampleTime)/len(listTotalSampleTime)))
     print()
-    return mapGestureNameToTrialList
+    return (mapGestureNameToTrialList, maxArrayLength)
 
 # Performs some basic preprocesing on rawSignal and returns the preprocessed signal in a new array
 def preprocess(rawSignal, maxArrayLength):
@@ -538,7 +538,7 @@ for gesture_log_path in gesture_log_paths:
     path_to_gesture_log = os.path.join(root_gesture_log_path, gesture_log_path)
     print("\n")
     print("***READING IN '{}'***".format(path_to_gesture_log))
-    map_gestures_to_trials = parse_and_create_gesture_trials(path_to_gesture_log)
+    map_gestures_to_trials, maxArrayLength = parse_and_create_gesture_trials(path_to_gesture_log)
     
     # read in full data stream
     full_sensor_data = None
@@ -1115,7 +1115,7 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, scaler, model, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, model, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
@@ -1123,6 +1123,8 @@ class AccelPlot:
         self.ax = ax
 
         self.scaler = scaler 
+
+        self.maxArrayLength
 
         self.model = model
 
@@ -1196,10 +1198,10 @@ class AccelPlot:
                 z_seg = list(itertools.islice(self.z, start_idx, end_idx))
 
                 # preprocess signal before classification and store in new arrays
-                x_p = list(preprocess(x_seg, len(x_seg)))
-                y_p = list(preprocess(y_seg, len(y_seg)))
-                z_p = list(preprocess(z_seg, len(z_seg)))
-                mag_p = list(preprocess(s, len(s)))
+                x_p = list(preprocess(x_seg, max(self.maxArrayLength, len(x_seg)))
+                y_p = list(preprocess(y_seg, max(self.maxArrayLength, len(y_seg))))
+                z_p = list(preprocess(z_seg, max(self.maxArrayLength, len(z_seg))))
+                mag_p = list(preprocess(s, max(self.maxArrayLength, len(s))))
 
                 self.ax.axvline(self.time[-self.window_length], ls='--', color='black', linewidth=1, alpha=0.8)
                 self.current_event = (t, s, x_seg, y_seg, z_seg, x_p, y_p, z_p, mag_p)
@@ -1370,7 +1372,6 @@ class AccelPlot:
         list_of_feature_vectors_event.append(features)
         column_headers = feature_names
 
-
         df = pd.DataFrame(list_of_feature_vectors_event, columns = feature_names)
         trial_indices = df.pop("trial_num")
         X = df
@@ -1449,7 +1450,7 @@ def main():
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
     ax = plt.axes(ylim=(0, 1500))
 
-    accel_plot = AccelPlot(fig, ax, str_port, scaler, model, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, str_port, maxArrayLength, scaler, model, max_length=args.max_len)
 
     # set up animation
   
