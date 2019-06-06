@@ -1134,6 +1134,10 @@ def train_whole_recorded_gestures():
     num_features_to_eliminate = 0
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
+
+    X_train_scaled_again = selector.transform(X_train_scaled)
+
+    clf.fit(X_train_scaled_again, y)
     return (scaler, selector, clf)
 
 # plot class
