@@ -1080,8 +1080,14 @@ class AccelPlot:
                 y_seg = list(itertools.islice(self.y, start_idx, end_idx))
                 z_seg = list(itertools.islice(self.z, start_idx, end_idx))
 
+                # preprocess signal before classification and store in new arrays
+                x_p = list(preprocess(x_seg, len(x_seg)))
+                y_p = list(preprocess(y_seg, len(y_seg)))
+                z_p = list(preprocess(z_seg, len(z_seg)))
+                mag_p = list(preprocess(s, len(s)))
+
                 self.ax.axvline(self.time[-self.window_length], ls='--', color='black', linewidth=1, alpha=0.8)
-                self.current_event = (t, s)
+                self.current_event = (t, s, x_seg, y_seg, z_seg, x_p, y_p, z_p, mag_p)
             elif self.current_event is not None:
                 # we are in the middle or end of a potential event
                 if min_max_diff >= min_max_continue_segment_threshold: 
@@ -1096,8 +1102,21 @@ class AccelPlot:
                     y_seg = list(itertools.islice(self.y, start_idx, end_idx))
                     z_seg = list(itertools.islice(self.z, start_idx, end_idx))
 
+                    # preprocess signal before classification and store in new arrays
+                    x_p = list(preprocess(x_seg, len(x_seg)))
+                    y_p = list(preprocess(y_seg, len(y_seg)))
+                    z_p = list(preprocess(z_seg, len(z_seg)))
+                    mag_p = list(preprocess(s, len(s)))
+
                     self.current_event[0].extend(t)
                     self.current_event[1].extend(s)
+                    self.current_event[2].extend(x_seg)
+                    self.current_event[3].extend(y_seg)
+                    self.current_event[4].extend(z_seg)
+                    self.current_event[5].extend(x_p)
+                    self.current_event[6].extend(y_p)
+                    self.current_event[7].extend(z_p)
+                    self.current_event[8].extend(mag_p)
                 elif min_max_diff < min_max_continue_segment_threshold:
                     print("finish segment", min_max_diff)
                     event_time = self.current_event[0]
@@ -1109,7 +1128,14 @@ class AccelPlot:
                         print("discarded event for being too short")
 
                     segment_result = {'time' : self.current_event[0],
-                                      'signal' : self.current_event[1] }
+                                      'mag' : self.current_event[1],
+                                      'x' : self.current_event[2],
+                                      'y' : self.current_event[3],
+                                      'z' : self.current_event[4],
+                                      'x_p' : self.current_event[5],
+                                      'y_p' : self.current_event[6],
+                                      'z_p' : self.current_event[7],
+                                      'mag_p' : self.current_event[8]}
                 
                     self.current_event = None # clear events
 
@@ -1120,9 +1146,40 @@ class AccelPlot:
         return segment_result
     
     def classify_event(self, segment_result):
-        # print("classify event", segment_result)
         t = segment_result['time']
-        s = segment_result['signal']
+        x = segment_result['x']
+        y = segment_result['y']
+        z = segment_result['z']
+        mag = segment_result['mag']
+        x_p = segment_result['x_p']
+        y_p = segment_result['y_p']
+        z_p = segment_result['z_p']
+        mag_p = segment_result['mag_p']
+        # print("classify event: x_p:")
+        # print(segment_result['x_p'])
+        # print("classify event: y_p:")
+        # print(segment_result['y_p'])
+        # print("classify event: z_p:")
+        # print(segment_result['z_p'])
+        # print("classify event: mag_p:")
+        # print(segment_result['mag_p'])
+
+        # Selected features
+        feat_length = len(mag)
+        feat_x_p_mean = np.array(x_p).mean()
+        feat_y_mean = np.array(y).mean()
+        feat_z_mean = np.array(z).mean()
+        feat_x_p_median = np.median(np.array(x_p))
+        feat_z_p_median = np.median(np.array(z_p))
+        feat_x_p_var = np.var(np.array(x_p))
+        feat_y_p_var = np.var(np.array(y_p))
+        feat_mag_var = np.var(np.array(mag))
+        feat_y_var = np.var(np.array(y))
+        feat_y_p_max = np.array(y_p).max()
+        feat_mag_max = np.array(mag).max()
+        feat_y_max = np.array(y).max()
+        feat_mag_min = np.array(mag).min()
+        feat_z_min = np.array(z).min()
 
     # update plot
     def update(self, frameNum, args, plt_lines):
