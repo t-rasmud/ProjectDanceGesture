@@ -1109,10 +1109,7 @@ def train_whole_recorded_gestures_elim_features():
 
     mask = selector.get_support()
 
-    print("------")
-    print(len(mask))
-    print(len(X.columns))
-    print(len(X[mask]), X.columns[mask])
+    print(len(X.columns[mask]), X.columns[mask])
     print("eliminated vars", X.columns[~mask])
 
     clf.fit(X_train_scaled_again, y)
