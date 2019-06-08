@@ -646,7 +646,7 @@ def extract_features_from_gesture_sets(gesture_sets, include_custom_gesture=True
 
 def get_average_gestures_to_compare(gesture_set, include_custom_gesture=False):
     aggregateGestureDictionary = {}
-    list_of_attributes = ["x", "y", "z", "mag", "x_p", "y_p", "z_p", "mag_p"]
+    list_of_attributes = ["x_p", "y_p", "z_p", "mag_p"]
     gesture_names = gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture);
     for name in gesture_names:
         for attr in list_of_attributes:
