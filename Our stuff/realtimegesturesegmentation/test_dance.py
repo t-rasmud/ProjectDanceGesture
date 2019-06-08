@@ -1603,17 +1603,29 @@ class AccelPlot:
 
         for name in self.aggregateGestureDictionary:
             for attr in self.aggregateGestureDictionary[name]:
-                signalToCompare = self.aggregateGestureDictionary[name][attr]
+                signalToCompare = aggregateGestureDictionary[name][attr]
                 currentSignal = segment_result[attr];
+                signalToComparePad = signalToCompare
+                currentSignalPad = currentSignal
+                if signalToCompare.shape[0] < currentSignal.shape[0]:
+                    signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                else:
+                    currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                alignedSignal = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+                
+                '''
                 corr_result_ab = signal.correlate(currentSignal, signalToCompare)
                 best_correlation_point = np.argmax(corr_result_ab)
                 index_shift = len(currentSignal) - np.argmax(corr_result_ab)
                 a_shifted = np.roll(currentSignal, index_shift)
-
-                euclid_distance_ashifted_to_b = distance.euclidean(a_shifted, signalToCompare)
+                '''
+                # print(alignedSignal.shape)
+                # print(currentSignal.shape)
+                # print(signalToCompare.shape)
+                euclid_distance_ashifted_to_b = distance.euclidean(alignedSignal, signalToComparePad)
                 features.append(euclid_distance_ashifted_to_b)
-                feature_names.append("euclidean distance shifted for " + attr)
-
+                feature_names.append("euclidean distance shifted for aligned gesture type " + name + " signal " + attr)    
+            
         '''
         # Selected features
         feat_length = len(mag)
