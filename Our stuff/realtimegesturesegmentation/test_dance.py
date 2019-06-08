@@ -1142,6 +1142,63 @@ def train_part_with_leave_one_out():
     plot_confusion_matrix(cm, classes=sorted_gesture_names, title="Scaled RFE test score: {:.3f}".format(score))
     plt.show()
 
+#100 percecnt
+def train_part_with_leave_one_out_all():
+    selected_gesture_set = get_gesture_set_with_str("Combined")
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
+                                                                                include_dummy_data=True) 
+
+    df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
+    trial_indices = df.pop("trial_num")
+    X = df
+    y = df.pop('gesture')
+    gesturer = df.pop('gesturer')
+
+    # 100/0 split with stratification
+    # in this case, we have 5 gestures x 10 samples = 50 total
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, stratify=y) # random_state=42
+    # print(y_test)
+    sorted_gesture_names = sorted(y_train.unique())
+
+    # Scale values
+    scaler = StandardScaler()
+    scaler.fit(X)
+    X_train_scaled = scaler.transform(X)
+    #X_test_scaled = scaler.transform(X_test)
+    clf = svm.SVC(kernel='linear')
+
+    # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
+    num_features_to_eliminate = 30
+    selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
+    selector.fit(X_train_scaled, y)
+
+    X_train_scaled_again = selector.transform(X_train_scaled)
+    #X_test_scaled_again = selector.transform(X_test_scaled)
+
+    mask = selector.get_support()
+
+    print(len(X.columns[mask]), X.columns[mask])
+    print("eliminated vars", X.columns[~mask])
+
+    clf.fit(X_train_scaled_again, y)
+
+    '''
+
+    score = clf.fit(X_train, y_train).score(X_test, y_test)
+    print("Unscaled test score: {:.3f}".format(score))
+    score = clf.fit(X_train_scaled, y_train).score(X_test_scaled, y_test)
+    print("Scaled test score: {:.3f}".format(score))
+    score = clf.fit(X_train_scaled_again, y_train).score(X_test_scaled_again, y_test)
+    print("Scaled RFE test score: {:.3f}".format(score))
+
+    y_pred = clf.fit(X_train_scaled_again, y_train).predict(X_test_scaled_again)
+    cm = confusion_matrix(y_test, y_pred, labels=sorted_gesture_names)
+    print(cm)
+    plt.figure(figsize=(10,10))
+    plot_confusion_matrix(cm, classes=sorted_gesture_names, title="Scaled RFE test score: {:.3f}".format(score))
+    plt.show()
+    '''
+
     #return (scaler, selector, clf)
 
     # mask = selector.get_support()
@@ -1588,7 +1645,8 @@ class AccelPlot:
 def main():
     #get trained model
     #train_part_with_leave_one_out();
-    scaler, model, clf = train_whole_recorded_gestures_elim_features()
+    train_part_with_leave_one_out_all()
+    #scaler, model, clf = train_whole_recorded_gestures_elim_features()
     #scaler, model, clf = train_whole_recorded_gestures()
 
 
@@ -1596,7 +1654,7 @@ def main():
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
 
-    
+    '''
 
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
@@ -1645,6 +1703,7 @@ def main():
     accel_plot.close()
 
     print('Exiting...')
+    '''
 
 # call main
 if __name__ == '__main__':
