@@ -1603,7 +1603,7 @@ class AccelPlot:
 
         for name in self.aggregateGestureDictionary:
             for attr in self.aggregateGestureDictionary[name]:
-                signalToCompare = aggregateGestureDictionary[name][attr]
+                signalToCompare = self.aggregateGestureDictionary[name][attr]
                 currentSignal = segment_result[attr];
                 signalToComparePad = signalToCompare
                 currentSignalPad = currentSignal
