@@ -1342,7 +1342,7 @@ def train_whole_recorded_gestures_elim_features():
     # in this case, we have 5 gestures x 10 samples = 50 total
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0, stratify=y) # random_state=42
     # print(y_test)
-    sorted_gesture_names = sorted(y_train.unique())
+    sorted_gesture_names = sorted(y.unique())
 
     # Scale values
     scaler = StandardScaler()
