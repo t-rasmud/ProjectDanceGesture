@@ -1729,7 +1729,7 @@ class AccelPlot:
 
         transform_x_again = self.selector.transform(transformed_x)
 
-        result = self.clf.predict(X)
+        result = self.clf.predict(transform_x_again)
         print(result)
 
     # update plot
