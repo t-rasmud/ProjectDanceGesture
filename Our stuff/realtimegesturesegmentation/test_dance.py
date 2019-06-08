@@ -1209,7 +1209,7 @@ def train_part_with_leave_one_out():
     clf = svm.SVC(kernel='linear')
 
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
-    num_features_to_eliminate = 30
+    num_features_to_eliminate = 25
     selector = RFE(clf, n_features_to_select=len(X_train.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y_train)
 
@@ -1352,7 +1352,7 @@ def train_whole_recorded_gestures_elim_features():
     clf = svm.SVC(kernel='linear')
 
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
-    num_features_to_eliminate = 30
+    num_features_to_eliminate = 25
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
 
