@@ -1588,8 +1588,8 @@ class AccelPlot:
 def main():
     #get trained model
     #train_part_with_leave_one_out();
-    #scaler, model, clf = train_whole_recorded_gestures_elim_features()
-    scaler, model, clf = train_whole_recorded_gestures()
+    scaler, model, clf = train_whole_recorded_gestures_elim_features()
+    #scaler, model, clf = train_whole_recorded_gestures()
 
 
     # python serial_plotter.py --port /dev/cu.usbmodem14601
