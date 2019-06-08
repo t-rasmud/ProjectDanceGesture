@@ -1227,7 +1227,7 @@ def train_whole_recorded_gestures():
     # in this case, we have 5 gestures x 10 samples = 50 total
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0, stratify=y) # random_state=42
     # print(y_test)
-    sorted_gesture_names = sorted(y_train.unique())
+    sorted_gesture_names = sorted(y.unique())
 
     # Scale values
     scaler = StandardScaler()
@@ -1241,9 +1241,9 @@ def train_whole_recorded_gestures():
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
 
-    mask = selector.get_support()
-    print(len(X_train_scaled[mask]), X_train_sacled.columns[mask])
-    print("eliminated vars", X_train_sacled.columns[~mask])
+    # mask = selector.get_support()
+    # print(len(X_train_scaled[mask]), X_train_scaled.columns[mask])
+    # print("eliminated vars", X_train_scaled.columns[~mask])
 
 
     X_train_scaled_again = selector.transform(X_train_scaled)
