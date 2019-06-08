@@ -1771,7 +1771,7 @@ class AccelPlot:
 # main() function
 def main():
     #get trained model
-    train_part_with_leave_one_out();
+    #train_part_with_leave_one_out();
     #train_part_with_leave_one_out_all()
     scaler, model, clf, aggregateGestureDictionary = train_whole_recorded_gestures_elim_features()
     #scaler, model, clf = train_whole_recorded_gestures()
