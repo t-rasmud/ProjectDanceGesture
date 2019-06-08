@@ -1604,7 +1604,7 @@ class AccelPlot:
         for name in self.aggregateGestureDictionary:
             for attr in self.aggregateGestureDictionary[name]:
                 signalToCompare = self.aggregateGestureDictionary[name][attr]
-                currentSignal = getattr(trial.accel, attr);
+                currentSignal = segment_result[attr];
                 corr_result_ab = signal.correlate(currentSignal, signalToCompare)
                 best_correlation_point = np.argmax(corr_result_ab)
                 index_shift = len(currentSignal) - np.argmax(corr_result_ab)
