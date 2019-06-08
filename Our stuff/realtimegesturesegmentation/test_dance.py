@@ -15,6 +15,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import RFE
 from sklearn.preprocessing import StandardScaler
 
+from scipy import signal
+from scipy.spatial import distance
+
 import sys, serial, argparse
 from time import sleep
 from collections import deque
@@ -641,11 +644,24 @@ def extract_features_from_gesture_sets(gesture_sets, include_custom_gesture=True
         column_headers = cols
     return (list_of_feature_vectors, column_headers)
 
+def get_average_gestures_to_compare(gesture_set, include_custom_gesture=False):
+    aggregateGestureDictionary = {}
+    list_of_attributes = ["x", "y", "z", "mag", "x_p", "y_p", "z_p", "mag_p"]
+    gesture_names = gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture);
+    for name in gesture_names:
+        for attr in list_of_attributes:
+            aggGesture = gesture_set.create_aggregate_signal(gesture_name, attr);
+            if name not in aggregateGestureDictionary:
+                aggregateGestureDictionary[name] = {};
+            aggregateGestureDictionary[name][attr] = aggGesture
+    return aggregateGestureDictionary
+
 # returns a tuple of (list of features, feature_names)
-def extract_features_from_gesture_set(gesture_set, include_custom_gesture=True, 
+def extract_features_from_gesture_set(gesture_set, aggregateGestureDictionary, include_custom_gesture=True, 
                                       include_dummy_data=False, verbose=False):
     list_of_feature_vectors = []
     column_headers = []
+
     for gesture_name in gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture):
         gesture_trials = gesture_set.map_gestures_to_trials[gesture_name]
         for trial in gesture_trials:
@@ -661,6 +677,31 @@ def extract_features_from_gesture_set(gesture_set, include_custom_gesture=True,
 
             features.append(trial.trialNum)
             feature_names.append("trial_num")
+
+            for name in aggregateGestureDictionary:
+                for attr in aggregateGestureDictionary[name]:
+                    signalToCompare = aggregateGestureDictionary[name][attr]
+                    currentSignal = getattr(trial.accel, attr);
+                    signalToComparePad = signalToCompare
+                    currentSignalPad = currentSignal
+                    if signalToCompare.shape[0] < currentSignal.shape[0]:
+                        signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    else:
+                        currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    alignedSignal = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+                    
+                    '''
+                    corr_result_ab = signal.correlate(currentSignal, signalToCompare)
+                    best_correlation_point = np.argmax(corr_result_ab)
+                    index_shift = len(currentSignal) - np.argmax(corr_result_ab)
+                    a_shifted = np.roll(currentSignal, index_shift)
+                    '''
+                    # print(alignedSignal.shape)
+                    # print(currentSignal.shape)
+                    # print(signalToCompare.shape)
+                    euclid_distance_ashifted_to_b = distance.euclidean(alignedSignal, signalToComparePad)
+                    features.append(euclid_distance_ashifted_to_b)
+                    feature_names.append("euclidean distance shifted for " + attr)
             
             # length
             features.append(len(trial.accel.mag))
@@ -899,7 +940,7 @@ def extract_features_from_gesture_set_hardcoded(gesture_set, include_custom_gest
 #     https://learning.oreilly.com/library/view/introduction-to-machine/9781449369880/ch04.html
 # - look a this pipeline article: https://ramhiser.com/post/2018-03-25-feature-selection-with-scikit-learn-pipeline/
 # TODO: one issue is that we are learning parameters on the whole training set, this isn't so good
-
+"""
 selected_gesture_set = get_gesture_set_with_str("Nicole")
 (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
                                                                             include_dummy_data=True) 
@@ -1088,10 +1129,12 @@ selector.fit(X_train_scaled, y_train)
 # plt.figure(figsize=(10,10))
 # plot_confusion_matrix(cm, classes=sorted_gesture_names, title="Scaled RFE test score: {:.3f}".format(score))
 # plt.show()
+"""
 
 def train_part_with_leave_one_out():
     selected_gesture_set = get_gesture_set_with_str("Combined")
-    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
+    gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set, gestureSetDictionary,
                                                                                 include_dummy_data=True) 
 
     df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
@@ -1145,7 +1188,8 @@ def train_part_with_leave_one_out():
 #100 percecnt
 def train_part_with_leave_one_out_all():
     selected_gesture_set = get_gesture_set_with_str("Combined")
-    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
+    gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set, gestureSetDictionary,
                                                                                 include_dummy_data=True) 
 
     df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
@@ -1158,7 +1202,7 @@ def train_part_with_leave_one_out_all():
     # in this case, we have 5 gestures x 10 samples = 50 total
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, stratify=y) # random_state=42
     # print(y_test)
-    sorted_gesture_names = sorted(y_train.unique())
+    sorted_gesture_names = sorted(y.unique())
 
     # Scale values
     scaler = StandardScaler()
@@ -1168,7 +1212,7 @@ def train_part_with_leave_one_out_all():
     clf = svm.SVC(kernel='linear')
 
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
-    num_features_to_eliminate = 30
+    num_features_to_eliminate = 20
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
 
@@ -1232,7 +1276,8 @@ def train_part_with_leave_one_out_all():
 
 def train_whole_recorded_gestures_elim_features():
     selected_gesture_set = get_gesture_set_with_str("Combined")
-    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
+    gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set, gestureSetDictionary,
                                                                                 include_dummy_data=True) 
 
     df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
@@ -1267,11 +1312,12 @@ def train_whole_recorded_gestures_elim_features():
     print("eliminated vars", X.columns[~mask])
 
     clf.fit(X_train_scaled_again, y)
-    return (scaler, selector, clf)
+    return (scaler, selector, clf, gestureSetDictionary)
 
 def train_whole_recorded_gestures():
     selected_gesture_set = get_gesture_set_with_str("Combined")
-    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set_hardcoded(selected_gesture_set,
+    gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set, gestureSetDictionary,
                                                                                 include_dummy_data=True) 
 
     df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
@@ -1306,7 +1352,7 @@ def train_whole_recorded_gestures():
     X_train_scaled_again = selector.transform(X_train_scaled)
 
     clf.fit(X_train_scaled_again, y)
-    return (scaler, selector, clf)
+    return (scaler, selector, clf, gestureSetDictionary)
 
 # plot class
 class AccelPlot:
@@ -1317,7 +1363,7 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, selector, clf, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, selector, clf, gestureSetDictionary, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
@@ -1329,6 +1375,8 @@ class AccelPlot:
         self.maxArrayLength = maxArrayLength
 
         self.selector = selector
+
+        self.gestureSetDictionary = gestureSetDictionary
 
         self.clf = clf
 
@@ -1488,6 +1536,32 @@ class AccelPlot:
         # print("classify event: mag_p:")
         # print(segment_result['mag_p'])
 
+        features = []
+        feature_names = []
+
+        # add in bookkeeping like gesture name and trial num
+        features.append("NAN")
+        feature_names.append("gesturer")
+            
+        features.append("56")
+        feature_names.append("gesture")
+
+        features.append("101")
+        feature_names.append("trial_num")
+
+        for name in aggregateGestureDictionary:
+            for attr in aggregateGestureDictionary[name]:
+                signalToCompare = aggregateGestureDictionary[name][attr]
+                currentSignal = getattr(trial.accel, attr);
+                corr_result_ab = signal.correlate(currentSignal, signalToCompare)
+                best_correlation_point = np.argmax(corr_result_ab)
+                index_shift = len(currentSignal) - np.argmax(corr_result_ab)
+                a_shifted = np.roll(currentSignal, index_shift)
+
+                euclid_distance_ashifted_to_b = distance.euclidean(a_shifted, signalToCompare)
+                features.append(euclid_distance_ashifted_to_b)
+                feature_names.append("euclidean distance shifted for " + attr)
+
         '''
         # Selected features
         feat_length = len(mag)
@@ -1510,19 +1584,6 @@ class AccelPlot:
         feat_y_var = np.var(np.array(y))
         feat_x_max = np.array(x).max()
         feat_mag_p_min = np.array(mag_p).min()
-
-        features = []
-        feature_names = []
-
-        # add in bookkeeping like gesture name and trial num
-        features.append("NAN")
-        feature_names.append("gesturer")
-            
-        features.append("56")
-        feature_names.append("gesture")
-
-        features.append("101")
-        feature_names.append("trial_num")
 
         features.append(feat_x_mean)
         feature_names.append("x mean")
