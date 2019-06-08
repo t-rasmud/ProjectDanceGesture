@@ -1604,7 +1604,7 @@ class AccelPlot:
         for name in self.aggregateGestureDictionary:
             for attr in self.aggregateGestureDictionary[name]:
                 signalToCompare = self.aggregateGestureDictionary[name][attr]
-                currentSignal = segment_result[attr];
+                currentSignal = np.array(segment_result[attr]);
                 signalToComparePad = signalToCompare
                 currentSignalPad = currentSignal
                 if signalToCompare.shape[0] < currentSignal.shape[0]:
