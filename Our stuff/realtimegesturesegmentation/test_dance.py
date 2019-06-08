@@ -1601,9 +1601,9 @@ class AccelPlot:
         features.append("101")
         feature_names.append("trial_num")
 
-        for name in aggregateGestureDictionary:
-            for attr in aggregateGestureDictionary[name]:
-                signalToCompare = aggregateGestureDictionary[name][attr]
+        for name in self.aggregateGestureDictionary:
+            for attr in self.aggregateGestureDictionary[name]:
+                signalToCompare = self.aggregateGestureDictionary[name][attr]
                 currentSignal = getattr(trial.accel, attr);
                 corr_result_ab = signal.correlate(currentSignal, signalToCompare)
                 best_correlation_point = np.argmax(corr_result_ab)
