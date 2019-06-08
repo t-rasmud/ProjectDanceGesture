@@ -1428,7 +1428,7 @@ class AccelPlot:
 
         self.selector = selector
 
-        self.gestureSetDictionary = gestureSetDictionary
+        self.aggregateGestureDictionary = gestureSetDictionary
 
         self.clf = clf
 
