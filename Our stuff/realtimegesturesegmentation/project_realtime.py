@@ -946,24 +946,6 @@ class AccelPlot:
         self.event_counter = (self.event_counter + 1) % 5
         self.txt.set_text(next_move)
 
-        print("len of segment result")
-        print(len(self.alignedSignal['x_p']))
-
-        currentSegment = self.alignedSignal;
-        self.plt_linesx[0].set_data(len(currentSegment['x_p']), currentSegment['x_p'])
-        self.plt_linesy[0].set_data(len(currentSegment['y_p']), currentSegment['y_p'])
-        self.plt_linesz[0].set_data(len(currentSegment['z_p']), currentSegment['z_p'])
-        self.plt_linesmag[0].set_data(len(currentSegment['mag_p']), currentSegment['mag_p'])
-
-        bestGesture = self.bestAggregateGesture;
-        print("len of best gesture result")
-        print(len(bestGesture['y_p']))
-        #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
-        self.plt_linesx[1].set_data(len(bestGesture['x_p']), bestGesture['x_p'])
-        self.plt_linesy[1].set_data(len(bestGesture['y_p']), bestGesture['y_p'])
-        self.plt_linesz[1].set_data(len(bestGesture['z_p']), bestGesture['z_p'])
-        self.plt_linesmag[1].set_data(len(bestGesture['mag_p']), bestGesture['mag_p'])
-
     # update plot
     def update(self, frameNum, args, plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag):
         try:
@@ -978,6 +960,24 @@ class AccelPlot:
                 segment_result = self.segment_event()
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
+                    
+        print("len of segment result")
+        print(len(self.alignedSignal['x_p']))
+
+        currentSegment = self.alignedSignal;
+        plt_linesx[0].set_data(len(currentSegment['x_p']), currentSegment['x_p'])
+        plt_linesy[0].set_data(len(currentSegment['y_p']), currentSegment['y_p'])
+        plt_linesz[0].set_data(len(currentSegment['z_p']), currentSegment['z_p'])
+        plt_linesmag[0].set_data(len(currentSegment['mag_p']), currentSegment['mag_p'])
+
+        bestGesture = self.bestAggregateGesture;
+        print("len of best gesture result")
+        print(len(bestGesture['y_p']))
+        #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
+        plt_linesx[1].set_data(len(bestGesture['x_p']), bestGesture['x_p'])
+        plt_linesy[1].set_data(len(bestGesture['y_p']), bestGesture['y_p'])
+        plt_linesz[1].set_data(len(bestGesture['z_p']), bestGesture['z_p'])
+        plt_linesmag[1].set_data(len(bestGesture['mag_p']), bestGesture['mag_p'])
 
                 # plot the data
                 for i in range(0, len(plt_lines)):
@@ -991,7 +991,7 @@ class AccelPlot:
         #     print('Error '+ str(e))
 
         #return a0,
-        return plt_lines
+        return plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag
 
     # clean up
     def close(self):
