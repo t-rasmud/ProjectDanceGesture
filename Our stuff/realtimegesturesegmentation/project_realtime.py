@@ -539,13 +539,14 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, txt, str_port, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, txt, score_txt, str_port, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
         self.fig = fig
         self.ax = ax
         self.txt = txt
+        self.score_txt = score_txt
 
         self.data = list()
         num_values_to_plot = 4
@@ -799,9 +800,11 @@ class AccelPlot:
             if score_comp_to_nicole < score_comp_to_rashmi:
                 print("Matched with Nicole")
                 print(score_comp_to_nicole)
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
             self.event_counter = self.event_counter + 1
             self.txt.set_text("Do the dance move: Dont pay Attention")
 
@@ -912,9 +915,11 @@ class AccelPlot:
             if score_comp_to_nicole < score_comp_to_rashmi:
                 print("Matched with Nicole")
                 print(score_comp_to_nicole)
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
             self.event_counter = self.event_counter + 1
             self.txt.set_text("Do the dance move: Flip")
 
@@ -1025,9 +1030,11 @@ class AccelPlot:
             if score_comp_to_nicole < score_comp_to_rashmi:
                 print("Matched with Nicole")
                 print(score_comp_to_nicole)
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
 
             self.event_counter = self.event_counter + 1
             self.txt.set_text("Do the dance move: Clap")
@@ -1139,9 +1146,11 @@ class AccelPlot:
             if score_comp_to_nicole < score_comp_to_rashmi:
                 print("Matched with Nicole")
                 print(score_comp_to_nicole)
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
 
             self.event_counter = self.event_counter + 1
             self.txt.set_text("Do the dance move: Elephant Arm")
@@ -1253,9 +1262,11 @@ class AccelPlot:
             if score_comp_to_nicole < score_comp_to_rashmi:
                 print("Matched with Nicole")
                 print(score_comp_to_nicole)
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
             self.event_counter = 0
             self.txt.set_text("Do the dance move: Pulling")
 
@@ -1379,8 +1390,9 @@ def main():
     # place a text box in upper left in axes coords
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     txt = ax.text(0.05, 0.95, "Do the dance move: Pulling", transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
+    score_txt = ax.text(0.05, 0.25, "Score: ", transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
-    accel_plot = AccelPlot(fig, ax, txt, str_port, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, txt, score_txt, str_port, max_length=args.max_len)
 
     # set up animation
   
