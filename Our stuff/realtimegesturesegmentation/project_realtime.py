@@ -798,6 +798,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_nicole_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+        alignedSignal_nicole_x_p = alignedSignal_x_p
         # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_nicole_agg_x_p, dist=euclidean)
         nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
 
@@ -811,6 +812,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_nicole_y_p = signalToComparePad
         alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+        alignedSignal_nicole_y_p = alignedSignal_y_p
         # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_nicole_agg_y_p, dist=euclidean)
         nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
 
@@ -824,6 +826,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_nicole_z_p = signalToComparePad
         alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+        alignedSignal_nicole_z_p = alignedSignal_z_p
         # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, pulling_nicole_agg_z_p, dist=euclidean)
         nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
 
@@ -837,6 +840,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_nicole_mag_p = signalToComparePad
         alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+        alignedSignal_nicole_mag_p = alignedSignal_mag_p
         # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, pulling_nicole_agg_mag_p, dist=euclidean)
         nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
 
@@ -853,6 +857,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_rashmi_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+         alignedSignal_rashmi_x_p = alignedSignal_x_p
         # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_rashmi_agg_x_p, dist=euclidean)
         rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
 
@@ -866,6 +871,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_rashmi_y_p = signalToComparePad
         alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+         alignedSignal_rashmi_y_p = alignedSignal_y_p
         # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_rashmi_agg_y_p, dist=euclidean)
         rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
 
@@ -879,6 +885,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_rashmi_z_p = signalToComparePad
         alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+        alignedSignal_rashmi_z_p = alignedSignal_z_p
         # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, pulling_rashmi_agg_z_p, dist=euclidean)
         rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
 
@@ -892,18 +899,13 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_rashmi_mag_p = signalToComparePad
         alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+        alignedSignal_rashmi_mag_p = alignedSignal_mag_p
         # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, pulling_rashmi_agg_mag_p, dist=euclidean)
         rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
 
         # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
         score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
 
-        self.alignedSignal = {
-            'x_p': alignedSignal_x_p,
-            'y_p': alignedSignal_y_p,
-            'z_p': alignedSignal_z_p,
-            'mag_p':alignedSignal_mag_p
-        }
         if score_comp_to_nicole < score_comp_to_rashmi:
             print("Matched with Nicole")
             print(score_comp_to_nicole)
@@ -914,6 +916,12 @@ class AccelPlot:
                 "z_p":signalToCompare_padded_nicole_z_p,
                 "mag_p":signalToCompare_padded_nicole_mag_p
             }
+            self.alignedSignal = {
+            'x_p': alignedSignal_nicole_x_p,
+            'y_p': alignedSignal_nicole_y_p,
+            'z_p': alignedSignal_nicole_z_p,
+            'mag_p':alignedSignal_nicole_mag_p
+        }
             
         else:
             print("Matched with Rashmi")
@@ -924,6 +932,12 @@ class AccelPlot:
                 "z_p":signalToCompare_rashmi_padded_z_p,
                 "mag_p":signalToCompare_rashmi_padded_mag_p
             }
+            self.alignedSignal = {
+            'x_p': alignedSignal_rashmi_x_p,
+            'y_p': alignedSignal_rashmi_y_p,
+            'z_p': alignedSignal_rashmi_z_p,
+            'mag_p':alignedSignal_rashmi_mag_p
+        }
         self.event_counter = (self.event_counter + 1) % 5
         self.txt.set_text(next_move)
 
