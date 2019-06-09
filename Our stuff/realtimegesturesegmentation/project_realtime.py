@@ -796,7 +796,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-        signalToCompare_padded_rashmi_x_p = signalToComparePad
+        signalToCompare_padded_nicole_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_nicole_agg_x_p, dist=euclidean)
         nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
@@ -945,7 +945,7 @@ class AccelPlot:
                     currentSegment = self.alignedSignal;
                     plt_linesx[0].set_data(currentSegment['x_p'])
                     plt_linesy[0].set_data(currentSegment['y_p'])
-                    plt_linesz[0].set_data(currentSegment['z_p')
+                    plt_linesz[0].set_data(currentSegment['z_p'])
                     plt_linesmag[0].set_data(segment_result['mag_p'])
 
                     bestGesture = self.bestAggregateGesture;
