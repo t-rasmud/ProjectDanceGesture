@@ -20,6 +20,10 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+from scipy.spatial import distance
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
+
 # Each accelerometer log file gets parsed and made into a SensorData object
 class SensorData:
     
@@ -535,12 +539,13 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, txt, str_port, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
         self.fig = fig
         self.ax = ax
+        self.txt = txt
 
         self.data = list()
         num_values_to_plot = 4
@@ -561,6 +566,8 @@ class AccelPlot:
         self.window_step = 10
         self.window_buffer = deque()
         self.current_event = None #tuple (time list, val list)
+
+        self.event_counter = 0
 
     def __add_to_buffer(self, buf, val):
         if len(buf) < self.max_length:
@@ -685,6 +692,573 @@ class AccelPlot:
         z_p = segment_result['z_p']
         mag_p = segment_result['mag_p']
 
+        if self.event_counter == 0:
+            print("Dance move: Pulling")
+            currentSignal = np.array(x_p)
+            signalToCompare = np.array(pulling_nicole_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_nicole_agg_x_p, dist=euclidean)
+            nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(pulling_nicole_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_nicole_agg_y_p, dist=euclidean)
+            nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(pulling_nicole_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, pulling_nicole_agg_z_p, dist=euclidean)
+            nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(pulling_nicole_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, pulling_nicole_agg_mag_p, dist=euclidean)
+            nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_nicole = nicole_dist_x_p + nicole_dist_y_p + nicole_dist_z_p + nicole_dist_mag_p
+            score_comp_to_nicole = nicole_euclid_distance_x + nicole_euclid_distance_y + nicole_euclid_distance_z + nicole_euclid_distance_mag
+
+            currentSignal = np.array(x_p)
+            singnalToCompare = np.array(pulling_rashmi_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_rashmi_agg_x_p, dist=euclidean)
+            rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(pulling_rashmi_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_rashmi_agg_y_p, dist=euclidean)
+            rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(pulling_rashmi_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, pulling_rashmi_agg_z_p, dist=euclidean)
+            rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+            
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(pulling_rashmi_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, pulling_rashmi_agg_mag_p, dist=euclidean)
+            rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
+            score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
+
+            if score_comp_to_nicole < score_comp_to_rashmi:
+                print("Matched with Nicole")
+                print(score_comp_to_nicole)
+            else:
+                print("Matched with Rashmi")
+                print(score_comp_to_rashmi)
+            self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Dont pay Attention")
+
+        elif self.event_counter == 1:
+            print("Dance move: Dont pay Attention")
+            currentSignal = np.array(x_p)
+            signalToCompare = np.array(dpa_nicole_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, dpa_nicole_agg_x_p, dist=euclidean)
+            nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(dpa_nicole_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, dpa_nicole_agg_y_p, dist=euclidean)
+            nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(dpa_nicole_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, dpa_nicole_agg_z_p, dist=euclidean)
+            nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(dpa_nicole_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, dpa_nicole_agg_mag_p, dist=euclidean)
+            nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_nicole = nicole_dist_x_p + nicole_dist_y_p + nicole_dist_z_p + nicole_dist_mag_p
+            score_comp_to_nicole = nicole_euclid_distance_x + nicole_euclid_distance_y + nicole_euclid_distance_z + nicole_euclid_distance_mag
+
+            currentSignal = np.array(x_p)
+            singnalToCompare = np.array(dpa_rashmi_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, dpa_rashmi_agg_x_p, dist=euclidean)
+            rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(dpa_rashmi_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, dpa_rashmi_agg_y_p, dist=euclidean)
+            rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(dpa_rashmi_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, dpa_rashmi_agg_z_p, dist=euclidean)
+            rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+            
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(dpa_rashmi_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, dpa_rashmi_agg_mag_p, dist=euclidean)
+            rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
+            score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
+
+            if score_comp_to_nicole < score_comp_to_rashmi:
+                print("Matched with Nicole")
+                print(score_comp_to_nicole)
+            else:
+                print("Matched with Rashmi")
+                print(score_comp_to_rashmi)
+            self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Flip")
+
+        elif self.event_counter == 2:
+            print("Dance move: Flip")
+            currentSignal = np.array(x_p)
+            signalToCompare = np.array(flip_nicole_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, flip_nicole_agg_x_p, dist=euclidean)
+            nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(flip_nicole_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, flip_nicole_agg_y_p, dist=euclidean)
+            nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(flip_nicole_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, flip_nicole_agg_z_p, dist=euclidean)
+            nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(flip_nicole_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, flip_nicole_agg_mag_p, dist=euclidean)
+            nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_nicole = nicole_dist_x_p + nicole_dist_y_p + nicole_dist_z_p + nicole_dist_mag_p
+            score_comp_to_nicole = nicole_euclid_distance_x + nicole_euclid_distance_y + nicole_euclid_distance_z + nicole_euclid_distance_mag
+
+            currentSignal = np.array(x_p)
+            singnalToCompare = np.array(flip_rashmi_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, flip_rashmi_agg_x_p, dist=euclidean)
+            rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(flip_rashmi_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, flip_rashmi_agg_y_p, dist=euclidean)
+            rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(flip_rashmi_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, flip_rashmi_agg_z_p, dist=euclidean)
+            rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+            
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(flip_rashmi_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, flip_rashmi_agg_mag_p, dist=euclidean)
+            rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
+            score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
+
+            if score_comp_to_nicole < score_comp_to_rashmi:
+                print("Matched with Nicole")
+                print(score_comp_to_nicole)
+            else:
+                print("Matched with Rashmi")
+                print(score_comp_to_rashmi)
+
+            self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Clap")
+
+        elif self.event_counter == 3:
+            print("Dance move: Clap")
+            currentSignal = np.array(x_p)
+            signalToCompare = np.array(clap_nicole_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, clap_nicole_agg_x_p, dist=euclidean)
+            nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(clap_nicole_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, clap_nicole_agg_y_p, dist=euclidean)
+            nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(clap_nicole_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, clap_nicole_agg_z_p, dist=euclidean)
+            nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(clap_nicole_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, clap_nicole_agg_mag_p, dist=euclidean)
+            nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_nicole = nicole_dist_x_p + nicole_dist_y_p + nicole_dist_z_p + nicole_dist_mag_p
+            score_comp_to_nicole = nicole_euclid_distance_x + nicole_euclid_distance_y + nicole_euclid_distance_z + nicole_euclid_distance_mag
+
+            currentSignal = np.array(x_p)
+            singnalToCompare = np.array(clap_rashmi_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, clap_rashmi_agg_x_p, dist=euclidean)
+            rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(clap_rashmi_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, clap_rashmi_agg_y_p, dist=euclidean)
+            rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(clap_rashmi_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, clap_rashmi_agg_z_p, dist=euclidean)
+            rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+            
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(clap_rashmi_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, clap_rashmi_agg_mag_p, dist=euclidean)
+            rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
+            score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
+
+            if score_comp_to_nicole < score_comp_to_rashmi:
+                print("Matched with Nicole")
+                print(score_comp_to_nicole)
+            else:
+                print("Matched with Rashmi")
+                print(score_comp_to_rashmi)
+
+            self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Elephant Arm")
+
+        elif self.event_counter == 4:
+            print("Dance move: Elephant Arm")
+            currentSignal = np.array(x_p)
+            signalToCompare = np.array(ea_nicole_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, ea_nicole_agg_x_p, dist=euclidean)
+            nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(ea_nicole_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, ea_nicole_agg_y_p, dist=euclidean)
+            nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(ea_nicole_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, ea_nicole_agg_z_p, dist=euclidean)
+            nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(ea_nicole_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, ea_nicole_agg_mag_p, dist=euclidean)
+            nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_nicole = nicole_dist_x_p + nicole_dist_y_p + nicole_dist_z_p + nicole_dist_mag_p
+            score_comp_to_nicole = nicole_euclid_distance_x + nicole_euclid_distance_y + nicole_euclid_distance_z + nicole_euclid_distance_mag
+
+            currentSignal = np.array(x_p)
+            singnalToCompare = np.array(ea_rashmi_agg_x_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, ea_rashmi_agg_x_p, dist=euclidean)
+            rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
+
+            currentSignal = np.array(y_p)
+            singnalToCompare = np.array(ea_rashmi_agg_y_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, ea_rashmi_agg_y_p, dist=euclidean)
+            rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
+
+            currentSignal = np.array(z_p)
+            singnalToCompare = np.array(ea_rashmi_agg_z_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, ea_rashmi_agg_z_p, dist=euclidean)
+            rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
+            
+            currentSignal = np.array(mag_p)
+            singnalToCompare = np.array(ea_rashmi_agg_mag_p)
+            signalToComparePad = signalToCompare
+            currentSignalPad = currentSignal
+            if signalToCompare.shape[0] < currentSignal.shape[0]:
+                signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            else:
+                currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+            # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, ea_rashmi_agg_mag_p, dist=euclidean)
+            rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
+
+            # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
+            score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
+
+            if score_comp_to_nicole < score_comp_to_rashmi:
+                print("Matched with Nicole")
+                print(score_comp_to_nicole)
+            else:
+                print("Matched with Rashmi")
+                print(score_comp_to_rashmi)
+            self.event_counter = 0
+            self.txt.set_text("Do the dance move: Pulling")
+
     # update plot
     def update(self, frameNum, args, plt_lines):
         try:
@@ -721,66 +1295,66 @@ class AccelPlot:
         self.ser.flush()
         self.ser.close()
 
+#Create Aggregate (Nicole)
+nicole_gestures = get_gesture_set_with_str("Nicole")
+print("Nicole:", nicole_gestures)
+pulling_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Pulling", "x_p")
+pulling_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Pulling", "y_p")
+pulling_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Pulling", "z_p")
+pulling_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Pulling", "mag_p")
+
+dpa_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "x_p")
+dpa_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "y_p")
+dpa_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "z_p")
+dpa_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "mag_p")
+
+flip_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Flip", "x_p")
+flip_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Flip", "y_p")
+flip_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Flip", "z_p")
+flip_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Flip", "mag_p")
+
+clap_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Clap", "x_p")
+clap_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Clap", "y_p")
+clap_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Clap", "z_p")
+clap_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Clap", "mag_p")
+
+ea_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "x_p")
+ea_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "y_p")
+ea_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "z_p")
+ea_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "mag_p")
+
+#Create Aggregate (Rashmi)
+rashmi_gestures = get_gesture_set_with_str("Rashmi")
+print("Rashmi:", rashmi_gestures)
+pulling_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Pulling", "x_p")
+pulling_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Pulling", "y_p")
+pulling_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Pulling", "z_p")
+pulling_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Pulling", "mag_p")
+
+dpa_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "x_p")
+dpa_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "y_p")
+dpa_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "z_p")
+dpa_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "mag_p")
+
+flip_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Flip", "x_p")
+flip_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Flip", "y_p")
+flip_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Flip", "z_p")
+flip_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Flip", "mag_p")
+
+clap_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Clap", "x_p")
+clap_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Clap", "y_p")
+clap_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Clap", "z_p")
+clap_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Clap", "mag_p")
+
+ea_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "x_p")
+ea_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "y_p")
+ea_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "z_p")
+ea_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "mag_p")
+
 def main():
 	# python serial_plotter.py --port /dev/cu.usbmodem14601
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
-
-    #Create Aggregate (Nicole)
-    nicole_gestures = get_gesture_set_with_str("Nicole")
-    print("Nicole:", nicole_gestures)
-    pulling_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Pulling", "x_p")
-    pulling_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Pulling", "y_p")
-    pulling_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Pulling", "z_p")
-    pulling_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Pulling", "mag_p")
-
-    dpa_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "x_p")
-    dpa_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "y_p")
-    dpa_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "z_p")
-    dpa_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "mag_p")
-
-    flip_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Flip", "x_p")
-    flip_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Flip", "y_p")
-    flip_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Flip", "z_p")
-    flip_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Flip", "mag_p")
-
-    clap_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Clap", "x_p")
-    clap_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Clap", "y_p")
-    clap_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Clap", "z_p")
-    clap_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Clap", "mag_p")
-
-    ea_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "x_p")
-    ea_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "y_p")
-    ea_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "z_p")
-    ea_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "mag_p")
-
-    #Create Aggregate (Rashmi)
-    rashmi_gestures = get_gesture_set_with_str("Rashmi")
-    print("Rashmi:", rashmi_gestures)
-    pulling_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Pulling", "x_p")
-    pulling_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Pulling", "y_p")
-    pulling_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Pulling", "z_p")
-    pulling_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Pulling", "mag_p")
-
-    dpa_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "x_p")
-    dpa_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "y_p")
-    dpa_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "z_p")
-    dpa_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "mag_p")
-
-    flip_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Flip", "x_p")
-    flip_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Flip", "y_p")
-    flip_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Flip", "z_p")
-    flip_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Flip", "mag_p")
-
-    clap_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Clap", "x_p")
-    clap_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Clap", "y_p")
-    clap_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Clap", "z_p")
-    clap_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Clap", "mag_p")
-
-    ea_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "x_p")
-    ea_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "y_p")
-    ea_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "z_p")
-    ea_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "mag_p")
 
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
@@ -802,8 +1376,11 @@ def main():
     fig = plt.figure(figsize=(10, 5))
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
     ax = plt.axes(ylim=(0, 1500))
+    # place a text box in upper left in axes coords
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    txt = ax.text(0.05, 0.95, "Do the dance move: Pulling", transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
-    accel_plot = AccelPlot(fig, ax, str_port, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, txt, str_port, max_length=args.max_len)
 
     # set up animation
   
