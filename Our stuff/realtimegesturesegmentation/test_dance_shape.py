@@ -1364,7 +1364,7 @@ def train_whole_recorded_gestures_elim_features():
     print("eliminated vars", X.columns[~mask])
 
     clf.fit(X_train_scaled_again, y)
-    return (scaler, selector, clf, gestureSetDictionary)
+    return (scaler, selector, clf, gestureSetDictionary, selected_gesture_set)
 
 def train_whole_recorded_gestures():
     selected_gesture_set = get_gesture_set_with_str("Combined")
@@ -1415,7 +1415,7 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, selector, clf, gestureSetDictionary, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, str_port, maxArrayLength, scaler, selector, clf, gestureSetDictionary, gestureSet, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
@@ -1429,6 +1429,8 @@ class AccelPlot:
         self.selector = selector
 
         self.aggregateGestureDictionary = gestureSetDictionary
+
+        self.gestureSet = gestureSet
 
         self.clf = clf
 
@@ -1601,35 +1603,63 @@ class AccelPlot:
         features.append("101")
         feature_names.append("trial_num")
 
-        predictDict = dict()
-        for name in self.aggregateGestureDictionary:
-            score = 0
-            predictDict[name] = list()
-            for attr in self.aggregateGestureDictionary[name]:
-                signalToCompare = self.aggregateGestureDictionary[name][attr]
-                currentSignal = np.array(segment_result[attr]);
-                signalToComparePad = signalToCompare
-                currentSignalPad = currentSignal
-                if signalToCompare.shape[0] < currentSignal.shape[0]:
-                    signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                else:
-                    currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
-                
-                '''
-                corr_result_ab = signal.correlate(currentSignal, signalToCompare)
-                best_correlation_point = np.argmax(corr_result_ab)
-                index_shift = len(currentSignal) - np.argmax(corr_result_ab)
-                a_shifted = np.roll(currentSignal, index_shift)
-                '''
-                # print(alignedSignal.shape)
-                # print(currentSignal.shape)
-                # print(signalToCompare.shape)
-                score = score + distance.euclidean(alignedSignal, signalToComparePad)
-                # features.append(euclid_distance_ashifted_to_b)
-                # feature_names.append("euclidean distance shifted for aligned gesture type " + name + " signal " + attr)    
-            predictDict[name] = score
+        sortedGestureNames = self.gestureSet.get_gesture_names_sorted
+        minScore = -1
+        bestGesture = None
+        predictDict = {}
+        for name in sortedGestureNames:
+            bestGestureScore = -1
+            for gesture in self.gestureSet.get_trials_for_gesture(name):
+                score = 0
+                for attr in self.aggregateGestureDictionary[name]:
+                    signalToCompare = gesture
+                    currentSignal = np.array(segment_result[attr]);
+                    signalToComparePad = signalToCompare
+                    currentSignalPad = currentSignal
+                    if signalToCompare.shape[0] < currentSignal.shape[0]:
+                        signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    else:
+                        currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
+                    score = score + distance.euclidean(alignedSignal, signalToComparePad)
+                if score < bestGestureScore or bestGestureScore == -1:
+                    bestGestureScore = score
+            if bestGestureScore < minScore or minScore == -1:
+                minScore = bestGestureScore
+                bestGesture = name
+            predictDict[name] = bestGestureScore
+
+
         
+        # predictDict = dict()
+        # for name in self.aggregateGestureDictionary:
+        #     score = 0
+        #     predictDict[name] = list()
+        #     for attr in self.aggregateGestureDictionary[name]:
+        #         signalToCompare = self.aggregateGestureDictionary[name][attr]
+        #         currentSignal = np.array(segment_result[attr]);
+        #         signalToComparePad = signalToCompare
+        #         currentSignalPad = currentSignal
+        #         if signalToCompare.shape[0] < currentSignal.shape[0]:
+        #             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        #         else:
+        #             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        #         alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
+                
+        #         '''
+        #         corr_result_ab = signal.correlate(currentSignal, signalToCompare)
+        #         best_correlation_point = np.argmax(corr_result_ab)
+        #         index_shift = len(currentSignal) - np.argmax(corr_result_ab)
+        #         a_shifted = np.roll(currentSignal, index_shift)
+        #         '''
+        #         # print(alignedSignal.shape)
+        #         # print(currentSignal.shape)
+        #         # print(signalToCompare.shape)
+        #         score = score + distance.euclidean(alignedSignal, signalToComparePad)
+        #         # features.append(euclid_distance_ashifted_to_b)
+        #         # feature_names.append("euclidean distance shifted for aligned gesture type " + name + " signal " + attr)    
+        #     predictDict[name] = score
+      
         for gest in predictDict:
             print(gest)
             print(predictDict[gest])
@@ -1780,7 +1810,7 @@ def main():
     #get trained model
     #train_part_with_leave_one_out();
     #train_part_with_leave_one_out_all()
-    scaler, model, clf, aggregateGestureDictionary = train_whole_recorded_gestures_elim_features()
+    scaler, model, clf, aggregateGestureDictionary, selected_gesture_set = train_whole_recorded_gestures_elim_features()
     #scaler, model, clf = train_whole_recorded_gestures()
 
 
@@ -1809,7 +1839,7 @@ def main():
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
     ax = plt.axes(ylim=(0, 1500))
 
-    accel_plot = AccelPlot(fig, ax, str_port, maxArrayLength, scaler, model, clf, aggregateGestureDictionary, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, str_port, maxArrayLength, scaler, model, clf, aggregateGestureDictionary, selected_gesture_set, max_length=args.max_len)
 
     # set up animation
   
