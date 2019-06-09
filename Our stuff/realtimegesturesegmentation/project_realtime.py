@@ -942,7 +942,7 @@ class AccelPlot:
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
                     print("len of segment result")
-                    print(len(segment_result['x_p']))
+                    print(len(alignedSignal['x_p']))
 
                     currentSegment = self.alignedSignal;
                     plt_linesx[0].set_ydata(currentSegment['x_p'])
