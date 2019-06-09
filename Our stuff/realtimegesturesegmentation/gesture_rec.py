@@ -201,7 +201,7 @@ def main():
 	# python serial_plotter.py --port /dev/cu.usbmodem14601
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
-    '''
+
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
     # add expected arguments
@@ -216,7 +216,6 @@ def main():
     str_port = str(args.port)
 
     print('Reading from serial port: {}'.format(str_port))
-    '''
 
     # plot parameters
 
@@ -248,16 +247,7 @@ def main():
     ax4.set_ylim((0, 1500))
     ax5.set_ylim((0, 1500))
     #ax = plt.axes(ax1, ylim=(0, 1500))
-    plt.show()
-
-    '''
-    fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(nrows=2,ncols=4)
-    ax1 = plt.axes(ylim=(0, 1500))
-    ax2 = plt.axes(ylim=(0, 200))
-    ax3 = plt.axes(ylim=(0, 200))
-    ax4 = plt.axes(ylim=(0, 200))
-    ax5 = plt.axes(ylim=(0, 200))
-    '''
+    #plt.show()
 
 
     accel_plot = AccelPlot(fig, ax1, str_port, max_length=args.max_len)
@@ -269,16 +259,45 @@ def main():
     labels = ['x', 'y', 'z', 'mag']
     alphas = [0.8, 0.8, 0.8, 0.9]
     for i in range(0, num_vals):
-        line2d, = ax.plot([], [], label=labels[i], alpha=alphas[i])
+        line2d, = ax1.plot([1], [1], label=labels[i], alpha=alphas[i])
         lines.append(line2d)
 
-    plt.legend(loc='upper right')
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels)
+
+    xpLines = list()
+    num_vals_xp = 2
+    labels_subplotsx = ['current gesture', 'aggregate gesture']
+    labels_subplotsy = ['current gesture', 'aggregate gesture']
+    labels_subplotsz = ['current gesture', 'aggregate gesture']
+    labels_subplotsmag = ['current gesture', 'aggregate gesture']
+    alphassub = [0.8, 0.8]
+    ypLines = list()
+    zpLines = list()
+    magpLines = list()
+    for i in range(0, num_vals_xp):
+        line2dx = ax2.plot([1], [1], label=labels_subplotsx[i], alpha=alphassub[i])
+        xpLines.append(line2dx)
+        line2dy = ax3.plot([1], [1], label=labels_subplotsy[i], alpha=alphassub[i])
+        ypLines.append(line2dy)
+        line2dz = ax4.plot([1], [1], label=labels_subplotsz[i], alpha=alphassub[i])
+        zpLines.append(line2dz)
+        line2dmag = ax5.plot([1], [1], label=labels_subplotsmag[i], alpha=alphassub[i])
+        magpLines.append(line2dmag)
+
+    handles1, labels1 = ax3.get_legend_handles_labels()
+    ax2.legend(handles1, labels1)
+    handles2, labels2 = ax3.get_legend_handles_labels()
+    ax3.legend(handles2, labels2)
+    handles, labels = ax4.get_legend_handles_labels()
+    ax4.legend(handles, labels)
+    handles, labels = ax5.get_legend_handles_labels()
+    ax5.legend(handles, labels)
 
     # for more on animation function, see https://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
     anim = animation.FuncAnimation(fig, accel_plot.update,
                                    fargs=(args, lines), # could consider adding blit=True
                                    interval=50) #interval=50 is 20fps
-
     # show plot
     plt.show()
 
