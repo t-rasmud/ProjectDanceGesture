@@ -991,7 +991,7 @@ class AccelPlot:
         #     print('Error '+ str(e))
 
         #return a0,
-        fig.canvas.draw()
+        self.fig.canvas.draw()
         return plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag
 
     # clean up
