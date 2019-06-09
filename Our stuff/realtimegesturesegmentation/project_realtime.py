@@ -857,7 +857,7 @@ class AccelPlot:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_rashmi_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
-         alignedSignal_rashmi_x_p = alignedSignal_x_p
+        alignedSignal_rashmi_x_p = alignedSignal_x_p
         # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_rashmi_agg_x_p, dist=euclidean)
         rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
 
