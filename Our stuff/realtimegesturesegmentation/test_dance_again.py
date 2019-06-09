@@ -1301,7 +1301,7 @@ def train_part_with_leave_one_out_all():
 
 
 def train_whole_recorded_gestures_elim_features():
-    selected_gesture_set = get_gesture_set_with_str("Combined")
+    selected_gesture_set = get_gesture_set_with_str("Nicole")
     gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
     (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set_euclidean(selected_gesture_set, gestureSetDictionary,
                                                                                 include_dummy_data=True) 
@@ -1326,7 +1326,7 @@ def train_whole_recorded_gestures_elim_features():
     clf = svm.SVC(kernel='linear')
 
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
-    num_features_to_eliminate = 0
+    num_features_to_eliminate = 20
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
 
@@ -1366,7 +1366,7 @@ def train_whole_recorded_gestures():
     clf = svm.SVC(kernel='linear')
 
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
-    num_features_to_eliminate = 0
+    num_features_to_eliminate = 20
     selector = RFE(clf, n_features_to_select=len(X.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y)
 
@@ -1588,24 +1588,76 @@ class AccelPlot:
         feature_names.append("z p mean")
 
         feat_mag_mean = np.array(mag).mean()
-        
+        features.append(feat_mag_mean)
+        feature_names.append("mag mean")
+
         feat_y_mean = np.array(y).mean()
+        features.append(feat_y_mean)
+        feature_names.append("y mean")
+
         feat_z_mean = np.array(z).mean()
+        features.append(feat_z_mean)
+        feature_names.append("z mean")
+
         feat_x_p_median = np.median(np.array(x_p))
+        features.append(feat_x_p_median)
+        feature_names.append("x p median")
+
         feat_y_median = np.median(np.array(y))
+        features.append(feat_y_median)
+        feature_names.append("y median")
+
         feat_mag_p_var = np.var(np.array(mag_p))
+        features.append(feat_mag_p_var)
+        feature_names.append("mag p var")
+
         feat_y_p_var = np.var(np.array(y_p))
+        features.append(feat_y_p_var)
+        feature_names.append("y p var")
+
         feat_mag_var = np.var(np.array(mag))
+        features.append(feat_mag_var)
+        feature_names.append("mag var")
+
         feat_y_var = np.var(np.array(y))
+        features.append(feat_y_var)
+        feature_names.append("y var")
+
         feat_mag_p_max = np.array(mag_p).max()
+        features.append(feat_mag_p_max)
+        feature_names.append("mag p max")
+
         feat_y_p_max = np.array(y_p).max()
+        features.append(feat_y_p_max)
+        feature_names.append("y p max")
+
         feat_mag_max = np.array(mag).max()
+        features.append(feat_mag_max)
+        feature_names.append("mag max")
+
         feat_x_max = np.array(x).max()
+        features.append(feat_x_max)
+        feature_names.append("x max")
+
         feat_y_max = np.array(y).max()
+        features.append(feat_y_max)
+        feature_names.append("y max")
+
         feat_mag_p_min = np.array(mag_p).min()
+        features.append(feat_mag_p_min)
+        feature_names.append("mag p min")
+
         feat_x_p_min = np.array(x_p).min()
+        features.append(feat_x_p_min)
+        feature_names.append("x p min")
+
         feat_y_p_min = np.array(y_p).min()
+        features.append(feat_y_p_min)
+        feature_names.append("y p min")
+
         feat_x_min = np.array(x).min()
+        features.append(feat_x_min)
+        feature_names.append("x min")
 
         '''
         feat_z_p_median = np.median(np.array(z_p))
@@ -1623,62 +1675,6 @@ class AccelPlot:
         feat_x_max = np.array(x).max()
         feat_mag_p_min = np.array(mag_p).min()
         '''
-
-        # length
-        features.append(feat_length)
-        feature_names.append("length")
-            
-        # mean
-        features.append(feat_x_p_mean)
-        feature_names.append("x_p.mean")
-        
-        # mean raw
-        features.append(feat_y_mean)
-        feature_names.append("y.mean")
-
-        features.append(feat_z_mean)
-        feature_names.append("z.mean")
-
-        # median
-        features.append(feat_x_p_median)
-        feature_names.append("x_p.median")
-
-        features.append(feat_z_p_median)
-        feature_names.append("z_p.median")
-
-        # var
-        features.append(feat_x_p_var)
-        feature_names.append("x_p.var")
-
-        features.append(feat_y_p_var)
-        feature_names.append("y_p.var")
-        
-        # var raw
-        features.append(feat_mag_var)
-        feature_names.append("mag.var")
-
-        features.append(feat_y_var)
-        feature_names.append("y.var")
-
-        # max
-
-        features.append(feat_y_p_var)
-        feature_names.append("y_p.max")
-        
-        #max raw
-        features.append(feat_mag_max)
-        feature_names.append("mag.max")
-
-        features.append(feat_y_max)
-        feature_names.append("y.max")
-        
-        # min raw
-        features.append(feat_mag_min)
-        feature_names.append("mag.min")
-
-        features.append(feat_z_min)
-        feature_names.append("z.min") 
-        '''      
 
         list_of_feature_vectors_event.append(features)
         column_headers = feature_names
@@ -1736,16 +1732,15 @@ class AccelPlot:
 def main():
     #get trained model
     # train_part_with_leave_one_out();
-    train_part_with_leave_one_out_all()
-    # scaler, model, clf, aggregateGestureDictionary = train_whole_recorded_gestures_elim_features()
-    #scaler, model, clf = train_whole_recorded_gestures()
+    # train_part_with_leave_one_out_all()
+    scaler, model, clf, aggregateGestureDictionary = train_whole_recorded_gestures_elim_features()
+    # scaler, model, clf = train_whole_recorded_gestures()
 
 
     # python serial_plotter.py --port /dev/cu.usbmodem14601
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
 
-    """
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
     # add expected arguments
@@ -1793,7 +1788,6 @@ def main():
     accel_plot.close()
 
     print('Exiting...')
-    """
 
 # call main
 if __name__ == '__main__':
