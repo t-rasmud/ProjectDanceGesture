@@ -1182,13 +1182,13 @@ def main():
     magpLines = list()
     print("xp lines")
     for i in range(0, num_vals_xp):
-        line2dx, = ax2.plot([], [], label=labels_subplotsx[i], alpha=alphassub[i])
+        line2dx, = ax2.plot([], label=labels_subplotsx[i], alpha=alphassub[i])
         xpLines.append(line2dx)
-        line2dy, = ax3.plot([], [], label=labels_subplotsy[i], alpha=alphassub[i])
+        line2dy, = ax3.plot([], label=labels_subplotsy[i], alpha=alphassub[i])
         ypLines.append(line2dy)
-        line2dz, = ax4.plot([], [], label=labels_subplotsz[i], alpha=alphassub[i])
+        line2dz, = ax4.plot([], label=labels_subplotsz[i], alpha=alphassub[i])
         zpLines.append(line2dz)
-        line2dmag, = ax5.plot([], [], label=labels_subplotsmag[i], alpha=alphassub[i])
+        line2dmag, = ax5.plot([], label=labels_subplotsmag[i], alpha=alphassub[i])
         magpLines.append(line2dmag)
     print(xpLines)
 
