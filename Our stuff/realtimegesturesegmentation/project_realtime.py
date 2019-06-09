@@ -973,9 +973,11 @@ class AccelPlot:
                     plt_linesz[1].set_ydata(bestGesture['z_p'])
                     plt_linesmag[1].set_ydata(bestGesture['mag_p'])
 
+                print("error is below here")
                 # plot the data
                 for i in range(0, len(plt_lines)):
                     plt_lines[i].set_data(self.time, self.data[i])
+                print("error is below here")
                 self.ax.set_xlim(self.time[0], self.time[-1])
 
         except KeyboardInterrupt:
@@ -984,8 +986,9 @@ class AccelPlot:
         # except Exception as e:
         #     print('Error '+ str(e))
 
+        print("error before return")
         #return a0,
-        return plt_lines
+        return plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag
 
     # clean up
     def close(self):
