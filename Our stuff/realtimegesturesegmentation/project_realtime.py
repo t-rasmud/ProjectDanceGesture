@@ -1158,12 +1158,14 @@ def main():
     # set up animation
   
     lines = list()
+    print("lines")
     num_vals = 4 # x,y,z,mag
     labels = ['x', 'y', 'z', 'mag']
     alphas = [0.8, 0.8, 0.8, 0.9]
     for i in range(0, num_vals):
-        line2d, = ax1.plot([1], [1], label=labels[i], alpha=alphas[i])
+        line2d, = ax1.plot([], [], label=labels[i], alpha=alphas[i])
         lines.append(line2d)
+    print(lines)
 
     handles, labels = ax1.get_legend_handles_labels()
     ax1.legend(handles, labels)
@@ -1178,15 +1180,17 @@ def main():
     ypLines = list()
     zpLines = list()
     magpLines = list()
+    print("xp lines")
     for i in range(0, num_vals_xp):
-        line2dx = ax2.plot([1], [1], label=labels_subplotsx[i], alpha=alphassub[i])
+        line2dx = ax2.plot([], [], label=labels_subplotsx[i], alpha=alphassub[i])
         xpLines.append(line2dx)
-        line2dy = ax3.plot([1], [1], label=labels_subplotsy[i], alpha=alphassub[i])
+        line2dy = ax3.plot([], [], label=labels_subplotsy[i], alpha=alphassub[i])
         ypLines.append(line2dy)
-        line2dz = ax4.plot([1], [1], label=labels_subplotsz[i], alpha=alphassub[i])
+        line2dz = ax4.plot([], [], label=labels_subplotsz[i], alpha=alphassub[i])
         zpLines.append(line2dz)
-        line2dmag = ax5.plot([1], [1], label=labels_subplotsmag[i], alpha=alphassub[i])
+        line2dmag = ax5.plot([], [], label=labels_subplotsmag[i], alpha=alphassub[i])
         magpLines.append(line2dmag)
+    print(xpLines)
 
     handles1, labels1 = ax3.get_legend_handles_labels()
     ax2.legend(handles1, labels1)
