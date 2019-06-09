@@ -1238,34 +1238,35 @@ def train_part_with_leave_one_out():
     plt.show()
 
 def leave_one_out_shape_matching():
-    selected_gesture_set = get_gesture_set_with_str("Combined")
+    selected_gesture_set = get_gesture_set_with_str("Nicole")
     trialList = selected_gesture_set.get_all_trials();
     listOfVals = list()
     for i in range(len(trialList)):
-        trial = trialList[i]
-        listOfVals.append([trial.gesture_name, trial])
+        trialVal = trialList[i]
+        listOfVals.append([trialVal.gestureName, trialVal])
     columnNames = ["gesture name", "trial"]
     df = pd.DataFrame(listOfVals, columns=columnNames)
-    X = df 
+    #print(df)
+    X=df.pop("trial")
     y = df.pop('gesture name')
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, stratify=y) # random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y) # random_state=42
 
     attributeNames = ["x", "y", "z", "mag", "x_p", "y_p", "z_p", "mag_p"]
     
     #looking at results for training
     numberOfMistakesTrain = 0
     totalGesturesInTrain = 0; 
-    for i in range(len(X_train)):
-        trial = X_train[i]
+    for trial in X_train:
         sortedGestureNames = selected_gesture_set.get_gesture_names_sorted()
         minScore = -1
         bestGesture = None
         predictDict = {}
         for name in sortedGestureNames:
             bestGestureScore = -1
-            for j in range(len(X_train)):
-                score = 0
-                gesture = X_train[j];
+            print("----")
+            print(bestGestureScore)
+            for gesture in X_train:
+                score = -1
                 for attr in attributeNames:
                     signalToCompare = np.array(getattr(gesture.accel, attr))
                     currentSignal = np.array(getattr(trial.accel, attr));
@@ -1276,41 +1277,48 @@ def leave_one_out_shape_matching():
                     else:
                         currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
                     alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
-                    score = score + distance.euclidean(alignedSignal, signalToComparePad)
-                if score < bestGestureScore or bestGestureScore == -1:
+                    score += distance.euclidean(alignedSignal, signalToComparePad)
+                    print(score)
+                if score < bestGestureScore or (bestGestureScore == -1 and score != -1):
+                    print("best gesture score", bestGestureScore)
                     bestGestureScore = score
-            if bestGestureScore < minScore or minScore == -1:
+            if bestGestureScore < minScore or (minScore == -1 and bestGestureScore != -1):
                 minScore = bestGestureScore
                 bestGesture = name
             predictDict[name] = bestGestureScore
         minPredictedDictVal = -1;
         gesturePredicted = None
-        for name in predictedDict:
-            if predictedDict[name] < minPredictedDictVal or minPredictedDictVal == -1:
-                minPredictedDictVal = predictedDict[name]
+        print(predictDict)
+        for name in predictDict:
+            if predictDict[name] < minPredictedDictVal or minPredictedDictVal == -1:
+                minPredictedDictVal = predictDict[name]
                 gesturePredicted = name
-        totalGesturesInTrain += 1
-        if y_test[i] != gesturePredicted:
+        #print(totalGesturesInTrain)
+        #print(y_train.iloc[totalGesturesInTrain])
+        print("----")
+        print("actualGestureName", y_train.iloc[totalGesturesInTrain])
+        print("predictedGestureName", gesturePredicted)
+        if y_train.iloc[totalGesturesInTrain] != gesturePredicted:
             numberOfMistakesTrain += 1
+        totalGesturesInTrain += 1
     
-    print("accuracy rate for training", numberOfMistakesTrain/totalGesturesInTrain);
+    print("accuracy rate for training", (totalGesturesInTrain -numberOfMistakesTrain)/totalGesturesInTrain);
     print("total gestures in train", totalGesturesInTrain)
 
+    '''
     numberOfMistakes = 0
     totalGesturesInTest = 0; 
 
     #looking at results for testing 
-    for i in range(len(X_test)):
-        trial = X_test[i]
+    for trial in X_test:
         sortedGestureNames = selected_gesture_set.get_gesture_names_sorted()
         minScore = -1
         bestGesture = None
         predictDict = {}
         for name in sortedGestureNames:
             bestGestureScore = -1
-            for j in range(len(X_train)):
+            for gesture in X_train:
                 score = 0
-                gesture = X_train[j];
                 for attr in attributeNames:
                     signalToCompare = np.array(getattr(gesture.accel, attr))
                     currentSignal = np.array(getattr(trial.accel, attr));
@@ -1330,16 +1338,17 @@ def leave_one_out_shape_matching():
             predictDict[name] = bestGestureScore
         minPredictedDictVal = -1;
         gesturePredicted = None
-        for name in predictedDict:
-            if predictedDict[name] < minPredictedDictVal or minPredictedDictVal == -1:
-                minPredictedDictVal = predictedDict[name]
+        for name in predictDict:
+            if predictDict[name] < minPredictedDictVal or minPredictedDictVal == -1:
+                minPredictedDictVal = predictDict[name]
                 gesturePredicted = name
-        totalGesturesInTest += 1
-        if y_test[i] != gesturePredicted:
+        if y_test.iloc[totalGesturesInTest] != gesturePredicted:
             numberOfMistakes += 1
+        totalGesturesInTest += 1
 
     print("accuracy rate for testing", numberOfMistakesTrain/totalGesturesInTrain);
     print("total gestures in test", totalGesturesInTrain)
+    '''
 
 
 #100 percecnt
