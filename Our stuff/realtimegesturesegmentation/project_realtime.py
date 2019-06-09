@@ -943,17 +943,17 @@ class AccelPlot:
                     cls_result = self.classify_event(segment_result)
 
                     currentSegment = self.alignedSignal;
-                    plt_linesx[0].set_data(currentSegment['x_p'])
-                    plt_linesy[0].set_data(currentSegment['y_p'])
-                    plt_linesz[0].set_data(currentSegment['z_p'])
-                    plt_linesmag[0].set_data(segment_result['mag_p'])
+                    plt_linesx[0].set_ydata(currentSegment['x_p'])
+                    plt_linesy[0].set_ydata(currentSegment['y_p'])
+                    plt_linesz[0].set_ydata(currentSegment['z_p'])
+                    plt_linesmag[0].set_ydata(segment_result['mag_p'])
 
                     bestGesture = self.bestAggregateGesture;
                     #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
-                    plt_linesx[1].set_data(bestGesture['x_p'])
-                    plt_linesy[1].set_data(bestGesture['y_p'])
-                    plt_linesz[1].set_data(bestGesture['z_p'])
-                    plt_linesmag[1].set_data(bestGesture['mag_p'])
+                    plt_linesx[1].set_ydata(bestGesture['x_p'])
+                    plt_linesy[1].set_ydata(bestGesture['y_p'])
+                    plt_linesz[1].set_ydata(bestGesture['z_p'])
+                    plt_linesmag[1].set_ydata(bestGesture['mag_p'])
 
                 # plot the data
                 for i in range(0, len(plt_lines)):
