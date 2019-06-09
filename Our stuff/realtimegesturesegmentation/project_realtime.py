@@ -541,7 +541,7 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, txt, score_txt, str_port, ax2, ax3, ax4, ax5, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, txt, score_txt, str_port, ax2, ax3, ax4, ax5, xpLines, ypLines, zpLines, magpLines, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
@@ -554,6 +554,11 @@ class AccelPlot:
         self.ax3 = ax3
         self.ax4 = ax4
         self.ax5 = ax5
+
+        self.plt_linesx = xpLines
+        self.plt_linesy = ypLines
+        self.plt_linesz = zpLines
+        self.plt_linesmag = magpLines
 
         self.bestAggregateGesture = None
         self.alignedSignal = None
@@ -940,25 +945,24 @@ class AccelPlot:
         }
         self.event_counter = (self.event_counter + 1) % 5
         self.txt.set_text(next_move)
-        '''
+
         print("len of segment result")
         print(len(self.alignedSignal['x_p']))
 
         currentSegment = self.alignedSignal;
-        plt_linesx[0].set_ydata(currentSegment['x_p'])
-        plt_linesy[0].set_ydata(currentSegment['y_p'])
-        plt_linesz[0].set_ydata(currentSegment['z_p'])
-        plt_linesmag[0].set_ydata(currentSegment['mag_p'])
+        self.plt_linesx[0].set_ydata(currentSegment['x_p'])
+        self.plt_linesy[0].set_ydata(currentSegment['y_p'])
+        self.plt_linesz[0].set_ydata(currentSegment['z_p'])
+        self.plt_linesmag[0].set_ydata(currentSegment['mag_p'])
 
         bestGesture = self.bestAggregateGesture;
         print("len of best gesture result")
         print(len(bestGesture['y_p']))
         #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
-        plt_linesx[1].set_ydata(bestGesture['x_p'])
-        plt_linesy[1].set_ydata(bestGesture['y_p'])
-        plt_linesz[1].set_ydata(bestGesture['z_p'])
-        plt_linesmag[1].set_ydata(bestGesture['mag_p'])
-        '''
+        self.plt_linesx[1].set_ydata(bestGesture['x_p'])
+        self.plt_linesy[1].set_ydata(bestGesture['y_p'])
+        self.plt_linesz[1].set_ydata(bestGesture['z_p'])
+        self.plt_linesmag[1].set_ydata(bestGesture['mag_p'])
 
     # update plot
     def update(self, frameNum, args, plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag):
@@ -975,11 +979,9 @@ class AccelPlot:
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
 
-                print("error is below here")
                 # plot the data
                 for i in range(0, len(plt_lines)):
                     plt_lines[i].set_data(self.time, self.data[i])
-                print("error is below here")
                 self.ax.set_xlim(self.time[0], self.time[-1])
 
         except KeyboardInterrupt:
@@ -988,9 +990,8 @@ class AccelPlot:
         # except Exception as e:
         #     print('Error '+ str(e))
 
-        print("error before return")
         #return a0,
-        return plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag
+        return plt_lines
 
     # clean up
     def close(self):
@@ -1176,8 +1177,6 @@ def main():
     #plt.show()
 
 
-    accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, ax2, ax3, ax4, ax5, max_length=args.max_len)
-
     # set up animation
   
     lines = list()
@@ -1214,6 +1213,8 @@ def main():
         line2dmag, = ax5.plot([], label=labels_subplotsmag[i], alpha=alphassub[i])
         magpLines.append(line2dmag)
     print(xpLines)
+
+    accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, ax2, ax3, ax4, ax5, xpLines, ypLines, zpLines, magpLines, max_length=args.max_len)
 
     handles1, labels1 = ax3.get_legend_handles_labels()
     ax2.legend(handles1, labels1)
