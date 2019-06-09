@@ -541,7 +541,7 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, txt, score_txt, str_port, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, txt, score_txt, str_port, ax2, ax3, ax4, ax5, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
@@ -549,6 +549,13 @@ class AccelPlot:
         self.ax = ax
         self.txt = txt
         self.score_txt = score_txt
+
+        self.ax2 = ax2
+        self.ax3 = ax3
+        self.ax4 = ax4
+        self.ax5 = ax5
+
+        self.bestAggregateGesture = None
 
         self.data = list()
         num_values_to_plot = 4
@@ -696,7 +703,6 @@ class AccelPlot:
         y_p = segment_result['y_p']
         z_p = segment_result['z_p']
         mag_p = segment_result['mag_p']
-        for i in range(len(plt_lines_xp)):
             
 
     
@@ -1290,7 +1296,7 @@ class AccelPlot:
             self.txt.set_text("Do the dance move: Pulling")
 
     # update plot
-    def update(self, frameNum, args, plt_lines):
+    def update(self, frameNum, args, plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag):
         try:
             while self.ser.in_waiting:
                 line = self.ser.readline()
@@ -1303,7 +1309,12 @@ class AccelPlot:
                 segment_result = self.segment_event()
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
+                    plt_linesx[0].set_data(segment_result['time'], segment_result['x_p'])
+                    plt_linesy[0].set_data(segment_result['time'], segment_result['y_p'])
+                    plt_linesz[0].set_data(segment_result['time'], segment_result['z_p'])
+                    plt_linesmag[0].set_data(segment_result['time'], segment_result['mag_p'])
 
+                    bestGesture = self.bestGesture;
 
                 # plot the data
                 for i in range(0, len(plt_lines)):
@@ -1503,7 +1514,7 @@ def main():
     #plt.show()
 
 
-    accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, ax2, ax3, ax4, ax5, max_length=args.max_len)
 
     # set up animation
   
@@ -1549,7 +1560,7 @@ def main():
 
     # for more on animation function, see https://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
     anim = animation.FuncAnimation(fig, accel_plot.update,
-                                   fargs=(args, lines), # could consider adding blit=True
+                                   fargs=(args, lines, xpLines, ypLines, zpLines, magpLines), # could consider adding blit=True
                                    interval=50) #interval=50 is 20fps
 
     # show plot
