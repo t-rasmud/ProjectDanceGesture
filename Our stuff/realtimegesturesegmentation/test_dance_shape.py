@@ -1603,7 +1603,7 @@ class AccelPlot:
         features.append("101")
         feature_names.append("trial_num")
 
-        sortedGestureNames = self.gestureSet.get_gesture_names_sorted
+        sortedGestureNames = self.gestureSet.get_gesture_names_sorted()
         minScore = -1
         bestGesture = None
         predictDict = {}
