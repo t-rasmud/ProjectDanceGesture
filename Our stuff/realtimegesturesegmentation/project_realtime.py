@@ -940,6 +940,25 @@ class AccelPlot:
         }
         self.event_counter = (self.event_counter + 1) % 5
         self.txt.set_text(next_move)
+        '''
+        print("len of segment result")
+        print(len(self.alignedSignal['x_p']))
+
+        currentSegment = self.alignedSignal;
+        plt_linesx[0].set_ydata(currentSegment['x_p'])
+        plt_linesy[0].set_ydata(currentSegment['y_p'])
+        plt_linesz[0].set_ydata(currentSegment['z_p'])
+        plt_linesmag[0].set_ydata(currentSegment['mag_p'])
+
+        bestGesture = self.bestAggregateGesture;
+        print("len of best gesture result")
+        print(len(bestGesture['y_p']))
+        #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
+        plt_linesx[1].set_ydata(bestGesture['x_p'])
+        plt_linesy[1].set_ydata(bestGesture['y_p'])
+        plt_linesz[1].set_ydata(bestGesture['z_p'])
+        plt_linesmag[1].set_ydata(bestGesture['mag_p'])
+        '''
 
     # update plot
     def update(self, frameNum, args, plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag):
@@ -955,23 +974,6 @@ class AccelPlot:
                 segment_result = self.segment_event()
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
-                    print("len of segment result")
-                    print(len(self.alignedSignal['x_p']))
-
-                    currentSegment = self.alignedSignal;
-                    plt_linesx[0].set_ydata(currentSegment['x_p'])
-                    plt_linesy[0].set_ydata(currentSegment['y_p'])
-                    plt_linesz[0].set_ydata(currentSegment['z_p'])
-                    plt_linesmag[0].set_ydata(currentSegment['mag_p'])
-
-                    bestGesture = self.bestAggregateGesture;
-                    print("len of best gesture result")
-                    print(len(bestGesture['y_p']))
-                    #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
-                    plt_linesx[1].set_ydata(bestGesture['x_p'])
-                    plt_linesy[1].set_ydata(bestGesture['y_p'])
-                    plt_linesz[1].set_ydata(bestGesture['z_p'])
-                    plt_linesmag[1].set_ydata(bestGesture['mag_p'])
 
                 print("error is below here")
                 # plot the data
