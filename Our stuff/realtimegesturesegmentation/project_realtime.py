@@ -24,6 +24,7 @@ import matplotlib.animation as animation
 from scipy.spatial import distance
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
+from matplotlib.gridspec import GridSpec
 
 # Each accelerometer log file gets parsed and made into a SensorData object
 class SensorData:
@@ -1486,6 +1487,12 @@ def main():
     #ax4.setTitle("z_p comparison")
     #ax5.setTitle("mag_p comparison")
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
+
+    # place a text box in upper left in axes coords
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    txt = ax1.text(0.05, 0.95, "Do the dance move: Pulling", transform=ax1.transAxes, fontsize=14, verticalalignment='top', bbox=props)
+    score_txt = ax1.text(0.05, 0.25, "Score: ", transform=ax1.transAxes, fontsize=14, verticalalignment='top', bbox=props)
+
     fig.align_labels()
     ax1.set_ylim((0, 1500))
     ax2.set_ylim((0, 1500))
@@ -1496,7 +1503,7 @@ def main():
     #plt.show()
 
 
-    accel_plot = AccelPlot(fig, ax1, str_port, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, max_length=args.max_len)
 
     # set up animation
   
