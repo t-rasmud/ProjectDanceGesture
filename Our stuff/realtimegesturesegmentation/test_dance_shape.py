@@ -646,11 +646,11 @@ def extract_features_from_gesture_sets(gesture_sets, include_custom_gesture=True
 
 def get_average_gestures_to_compare(gesture_set, include_custom_gesture=False):
     aggregateGestureDictionary = {}
-    list_of_attributes = ["x", "y", "z", "mag", "x_p", "y_p", "z_p", "mag_p"]
+    list_of_attributes = ["x_p", "y_p", "z_p", "mag_p"]
     gesture_names = gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture);
     for name in gesture_names:
         for attr in list_of_attributes:
-            aggGesture = gesture_set.create_aggregate_signal(gesture_name, attr);
+            aggGesture = gesture_set.create_aggregate_signal(name, attr);
             if name not in aggregateGestureDictionary:
                 aggregateGestureDictionary[name] = {};
             aggregateGestureDictionary[name][attr] = aggGesture
@@ -1602,11 +1602,9 @@ class AccelPlot:
         feature_names.append("trial_num")
 
         predictDict = dict()
-        print(self.aggregateGestureDictionary);
         for name in self.aggregateGestureDictionary:
             score = 0
             predictDict[name] = list()
-            print("-----s")
             for attr in self.aggregateGestureDictionary[name]:
                 signalToCompare = self.aggregateGestureDictionary[name][attr]
                 currentSignal = np.array(segment_result[attr]);
@@ -1616,7 +1614,7 @@ class AccelPlot:
                     signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
                 else:
                     currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                alignedSignal = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
+                alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
                 
                 '''
                 corr_result_ab = signal.correlate(currentSignal, signalToCompare)
@@ -1628,7 +1626,6 @@ class AccelPlot:
                 # print(currentSignal.shape)
                 # print(signalToCompare.shape)
                 score = score + distance.euclidean(alignedSignal, signalToComparePad)
-                print(score)
                 # features.append(euclid_distance_ashifted_to_b)
                 # feature_names.append("euclidean distance shifted for aligned gesture type " + name + " signal " + attr)    
             predictDict[name] = score

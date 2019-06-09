@@ -650,7 +650,7 @@ def get_average_gestures_to_compare(gesture_set, include_custom_gesture=False):
     gesture_names = gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture);
     for name in gesture_names:
         for attr in list_of_attributes:
-            aggGesture = gesture_set.create_aggregate_signal(gesture_name, attr);
+            aggGesture = gesture_set.create_aggregate_signal(name, attr);
             if name not in aggregateGestureDictionary:
                 aggregateGestureDictionary[name] = {};
             aggregateGestureDictionary[name][attr] = aggGesture
