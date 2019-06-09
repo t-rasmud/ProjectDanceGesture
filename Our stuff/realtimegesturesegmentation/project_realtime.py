@@ -963,7 +963,7 @@ class AccelPlot:
         self.plt_linesy[1].set_data(len(bestGesture['y_p']), bestGesture['y_p'])
         self.plt_linesz[1].set_data(len(bestGesture['z_p']), bestGesture['z_p'])
         self.plt_linesmag[1].set_data(len(bestGesture['mag_p']), bestGesture['mag_p'])
-        print("hi")
+        self.fig.canvas.draw()
 
     # update plot
     def update(self, frameNum, args, plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag):
