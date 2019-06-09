@@ -893,10 +893,21 @@ class AccelPlot:
             print("Matched with Nicole")
             print(score_comp_to_nicole)
             self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
+            self.bestAggregateGesture = {"x_p":signalToCompare_nicole_x_p,
+                "y_p":signalToCompare_nicole_y_p,
+                "z_p":signalToCompare_nicole_z_p,
+                "mag_p":signalToCompare_nicole_mag_p
+            }
+            
         else:
             print("Matched with Rashmi")
             print(score_comp_to_rashmi)
             self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
+            self.bestAggregateGesture = {"x_p":signalToCompare_rashmi_x_p,
+                "y_p":signalToCompare_rashmi_y_p,
+                "z_p":signalToCompare_rashmi_z_p,
+                "mag_p":signalToCompare_rashmi_mag_p
+            }
         self.event_counter = (self.event_counter + 1) % 5
         self.txt.set_text(next_move)
 
