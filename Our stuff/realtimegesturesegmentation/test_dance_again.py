@@ -646,7 +646,7 @@ def extract_features_from_gesture_sets(gesture_sets, include_custom_gesture=True
 
 def get_average_gestures_to_compare(gesture_set, include_custom_gesture=False):
     aggregateGestureDictionary = {}
-    list_of_attributes = ["x_p", "y_p", "z_p", "mag_p"]
+    list_of_attributes = ["x", "y", "z", "mag", "x_p", "y_p", "z_p", "mag_p"]
     gesture_names = gesture_set.get_gesture_names_sorted(filter_custom_gesture=not include_custom_gesture);
     for name in gesture_names:
         for attr in list_of_attributes:
@@ -709,7 +709,7 @@ def extract_features_from_gesture_set_euclidean (gesture_set, aggregateGestureDi
 
 
 # returns a tuple of (list of features, feature_names)
-def extract_features_from_gesture_set(gesture_set, aggregateGestureDictionary, include_custom_gesture=True, 
+def extract_features_from_gesture_set(gesture_set, include_custom_gesture=True, 
                                       include_dummy_data=False, verbose=False):
     list_of_feature_vectors = []
     column_headers = []
@@ -730,31 +730,6 @@ def extract_features_from_gesture_set(gesture_set, aggregateGestureDictionary, i
             features.append(trial.trialNum)
             feature_names.append("trial_num")
 
-            for name in aggregateGestureDictionary:
-                for attr in aggregateGestureDictionary[name]:
-                    signalToCompare = aggregateGestureDictionary[name][attr]
-                    currentSignal = getattr(trial.accel, attr);
-                    signalToComparePad = signalToCompare
-                    currentSignalPad = currentSignal
-                    if signalToCompare.shape[0] < currentSignal.shape[0]:
-                        signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                    else:
-                        currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                    alignedSignal = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
-                    
-                    '''
-                    corr_result_ab = signal.correlate(currentSignal, signalToCompare)
-                    best_correlation_point = np.argmax(corr_result_ab)
-                    index_shift = len(currentSignal) - np.argmax(corr_result_ab)
-                    a_shifted = np.roll(currentSignal, index_shift)
-                    '''
-                    # print(alignedSignal.shape)
-                    # print(currentSignal.shape)
-                    # print(signalToCompare.shape)
-                    euclid_distance_ashifted_to_b = distance.euclidean(alignedSignal, signalToComparePad)
-                    features.append(euclid_distance_ashifted_to_b)
-                    feature_names.append("euclidean distance shifted for aligned gesture type " + name + " signal " + attr)  
-            
             # length
             features.append(len(trial.accel.mag))
             feature_names.append("length")
@@ -1184,9 +1159,8 @@ selector.fit(X_train_scaled, y_train)
 """
 
 def train_part_with_leave_one_out():
-    selected_gesture_set = get_gesture_set_with_str("Rashmi")
-    gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
-    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set_euclidean(selected_gesture_set, gestureSetDictionary,
+    selected_gesture_set = get_gesture_set_with_str("Nicole")
+    (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set,
                                                                                 include_dummy_data=True) 
 
     df = pd.DataFrame(list_of_feature_vectors, columns = feature_names)
@@ -1197,7 +1171,7 @@ def train_part_with_leave_one_out():
 
     # 100/0 split with stratification
     # in this case, we have 5 gestures x 10 samples = 50 total
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, stratify=y) # random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y) # random_state=42
     # print(y_test)
     sorted_gesture_names = sorted(y_train.unique())
 
@@ -1209,7 +1183,7 @@ def train_part_with_leave_one_out():
     clf = svm.SVC(kernel='linear')
 
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html
-    num_features_to_eliminate = 25
+    num_features_to_eliminate = 20
     selector = RFE(clf, n_features_to_select=len(X_train.columns) - num_features_to_eliminate)
     selector.fit(X_train_scaled, y_train)
 
@@ -1239,7 +1213,7 @@ def train_part_with_leave_one_out():
 
 #100 percecnt
 def train_part_with_leave_one_out_all():
-    selected_gesture_set = get_gesture_set_with_str("Combined")
+    selected_gesture_set = get_gesture_set_with_str("Nicole")
     gestureSetDictionary = get_average_gestures_to_compare(selected_gesture_set)
     (list_of_feature_vectors, feature_names) = extract_features_from_gesture_set(selected_gesture_set, gestureSetDictionary,
                                                                                 include_dummy_data=True) 
@@ -1600,46 +1574,40 @@ class AccelPlot:
 
         features.append("101")
         feature_names.append("trial_num")
-
-        predictDict = dict()
-        for name in self.aggregateGestureDictionary:
-            score = 0
-            predictDict[name] = list()
-            for attr in self.aggregateGestureDictionary[name]:
-                signalToCompare = self.aggregateGestureDictionary[name][attr]
-                currentSignal = np.array(segment_result[attr]);
-                signalToComparePad = signalToCompare
-                currentSignalPad = currentSignal
-                if signalToCompare.shape[0] < currentSignal.shape[0]:
-                    signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                else:
-                    currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-                alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
-                
-                '''
-                corr_result_ab = signal.correlate(currentSignal, signalToCompare)
-                best_correlation_point = np.argmax(corr_result_ab)
-                index_shift = len(currentSignal) - np.argmax(corr_result_ab)
-                a_shifted = np.roll(currentSignal, index_shift)
-                '''
-                # print(alignedSignal.shape)
-                # print(currentSignal.shape)
-                # print(signalToCompare.shape)
-                score = score + distance.euclidean(alignedSignal, signalToComparePad)
-                # features.append(euclid_distance_ashifted_to_b)
-                # feature_names.append("euclidean distance shifted for aligned gesture type " + name + " signal " + attr)    
-            predictDict[name] = score
-        
-        for gest in predictDict:
-            print(gest)
-            print(predictDict[gest])
-        '''
-        # Selected features
-        feat_length = len(mag)
+            
         feat_x_p_mean = np.array(x_p).mean()
+        features.append(feat_x_p_mean)
+        feature_names.append("x p mean")
+
+        feat_y_p_mean = np.array(y_p).mean()
+        features.append(feat_y_p_mean)
+        feature_names.append("y p mean")
+
+        feat_z_p_mean = np.array(z_p).mean()
+        features.append(feat_z_p_mean)
+        feature_names.append("z p mean")
+
+        feat_mag_mean = np.array(mag).mean()
+        
         feat_y_mean = np.array(y).mean()
         feat_z_mean = np.array(z).mean()
         feat_x_p_median = np.median(np.array(x_p))
+        feat_y_median = np.median(np.array(y))
+        feat_mag_p_var = np.var(np.array(mag_p))
+        feat_y_p_var = np.var(np.array(y_p))
+        feat_mag_var = np.var(np.array(mag))
+        feat_y_var = np.var(np.array(y))
+        feat_mag_p_max = np.array(mag_p).max()
+        feat_y_p_max = np.array(y_p).max()
+        feat_mag_max = np.array(mag).max()
+        feat_x_max = np.array(x).max()
+        feat_y_max = np.array(y).max()
+        feat_mag_p_min = np.array(mag_p).min()
+        feat_x_p_min = np.array(x_p).min()
+        feat_y_p_min = np.array(y_p).min()
+        feat_x_min = np.array(x).min()
+
+        '''
         feat_z_p_median = np.median(np.array(z_p))
         feat_x_p_var = np.var(np.array(x_p))
         feat_y_p_var = np.var(np.array(y_p))
@@ -1650,23 +1618,12 @@ class AccelPlot:
         feat_y_max = np.array(y).max()
         feat_mag_min = np.array(mag).min()
         feat_z_min = np.array(z).min()
-        '''
-        '''
         feat_x_mean = np.array(x).mean()
         feat_y_var = np.var(np.array(y))
         feat_x_max = np.array(x).max()
         feat_mag_p_min = np.array(mag_p).min()
+        '''
 
-        features.append(feat_x_mean)
-        feature_names.append("x mean")
-        features.append(feat_y_var)
-        feature_names.append("y var")
-        features.append(feat_x_max)
-        feature_names.append("x max")
-        features.append(feat_mag_p_min)
-        feature_names.append("mag p min")
-        '''
-        '''
         # length
         features.append(feat_length)
         feature_names.append("length")
@@ -1723,21 +1680,21 @@ class AccelPlot:
         feature_names.append("z.min") 
         '''      
 
-        # list_of_feature_vectors_event.append(features)
-        # column_headers = feature_names
+        list_of_feature_vectors_event.append(features)
+        column_headers = feature_names
 
-        # df = pd.DataFrame(list_of_feature_vectors_event, columns = feature_names)
-        # trial_indices = df.pop("trial_num")
-        # X = df
-        # df.pop('gesture')
-        # gesturer = df.pop('gesturer')
+        df = pd.DataFrame(list_of_feature_vectors_event, columns = feature_names)
+        trial_indices = df.pop("trial_num")
+        X = df
+        df.pop('gesture')
+        gesturer = df.pop('gesturer')
 
-        # transformed_x = self.scaler.transform(X)
+        transformed_x = self.scaler.transform(X)
 
-        # transform_x_again = self.selector.transform(transformed_x)
+        transform_x_again = self.selector.transform(transformed_x)
 
-        # result = self.clf.predict(transform_x_again)
-        # print(result)
+        result = self.clf.predict(transform_x_again)
+        print(result)
 
     # update plot
     def update(self, frameNum, args, plt_lines):
@@ -1778,9 +1735,9 @@ class AccelPlot:
 # main() function
 def main():
     #get trained model
-    #train_part_with_leave_one_out();
-    #train_part_with_leave_one_out_all()
-    scaler, model, clf, aggregateGestureDictionary = train_whole_recorded_gestures_elim_features()
+    # train_part_with_leave_one_out();
+    train_part_with_leave_one_out_all()
+    # scaler, model, clf, aggregateGestureDictionary = train_whole_recorded_gestures_elim_features()
     #scaler, model, clf = train_whole_recorded_gestures()
 
 
@@ -1788,6 +1745,7 @@ def main():
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
 
+    """
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
     # add expected arguments
@@ -1835,6 +1793,7 @@ def main():
     accel_plot.close()
 
     print('Exiting...')
+    """
 
 # call main
 if __name__ == '__main__':
