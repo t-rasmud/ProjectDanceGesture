@@ -539,12 +539,13 @@ class AccelPlot:
     ARDUINO_CSV_INDEX_Z = 3
 
     # constr
-    def __init__(self, fig, ax, str_port, baud_rate=9600, max_length=100):
+    def __init__(self, fig, ax, txt, str_port, baud_rate=9600, max_length=100):
         # open serial port
         self.ser = serial.Serial(str_port, 9600)
 
         self.fig = fig
         self.ax = ax
+        self.txt = txt
 
         self.data = list()
         num_values_to_plot = 4
@@ -801,9 +802,10 @@ class AccelPlot:
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
-
             self.event_counter = self.event_counter + 1
-        if self.event_counter == 1:
+            self.txt.set_text("Do the dance move: Dont pay Attention")
+
+        elif self.event_counter == 1:
             print("Dance move: Dont pay Attention")
             currentSignal = np.array(x_p)
             signalToCompare = np.array(dpa_nicole_agg_x_p)
@@ -913,10 +915,10 @@ class AccelPlot:
             else:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
-
             self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Flip")
 
-        if self.event_counter == 2:
+        elif self.event_counter == 2:
             print("Dance move: Flip")
             currentSignal = np.array(x_p)
             signalToCompare = np.array(flip_nicole_agg_x_p)
@@ -1028,8 +1030,9 @@ class AccelPlot:
                 print(score_comp_to_rashmi)
 
             self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Clap")
 
-        if self.event_counter == 3:
+        elif self.event_counter == 3:
             print("Dance move: Clap")
             currentSignal = np.array(x_p)
             signalToCompare = np.array(clap_nicole_agg_x_p)
@@ -1141,8 +1144,9 @@ class AccelPlot:
                 print(score_comp_to_rashmi)
 
             self.event_counter = self.event_counter + 1
+            self.txt.set_text("Do the dance move: Elephant Arm")
 
-        if self.event_counter == 4:
+        elif self.event_counter == 4:
             print("Dance move: Elephant Arm")
             currentSignal = np.array(x_p)
             signalToCompare = np.array(ea_nicole_agg_x_p)
@@ -1253,6 +1257,7 @@ class AccelPlot:
                 print("Matched with Rashmi")
                 print(score_comp_to_rashmi)
             self.event_counter = 0
+            self.txt.set_text("Do the dance move: Pulling")
 
     # update plot
     def update(self, frameNum, args, plt_lines):
@@ -1371,8 +1376,11 @@ def main():
     fig = plt.figure(figsize=(10, 5))
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
     ax = plt.axes(ylim=(0, 1500))
+    # place a text box in upper left in axes coords
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    txt = ax.text(0.05, 0.95, "Do the dance move: Pulling", transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
-    accel_plot = AccelPlot(fig, ax, str_port, max_length=args.max_len)
+    accel_plot = AccelPlot(fig, ax, txt, str_port, max_length=args.max_len)
 
     # set up animation
   
