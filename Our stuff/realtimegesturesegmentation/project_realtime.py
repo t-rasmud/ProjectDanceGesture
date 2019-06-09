@@ -1308,59 +1308,122 @@ class AccelPlot:
 
 #Create Aggregate (Nicole)
 nicole_gestures = get_gesture_set_with_str("Nicole")
+nicole_dictionary = {}
+nicole_dictionary["pulling"] = {}
+nicole_dictionary["Dont pay Attention"] = {}
+nicole_dictionary["Flip"] = {}
+nicole_dictionary['Clap'] = {}
+nicole_dictionary['Elephant Arm'] = {}
 print("Nicole:", nicole_gestures)
+
+currDictionary = nicole_dictionary['pulling']
 pulling_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Pulling", "x_p")
+currDictionary['x_p'] = pulling_nicole_agg_x_p
 pulling_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Pulling", "y_p")
+currDictionary['y_p'] = pulling_nicole_agg_y_p
 pulling_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Pulling", "z_p")
+currDictionary['z_p'] = pulling_nicole_agg_z_p
 pulling_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Pulling", "mag_p")
+currDictionary['mag_p'] = pulling_nicole_agg_mag_p
 
+currDictionary = nicole_dictionary['Dont pay Attention']
 dpa_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "x_p")
+currDictionary['x_p'] = dpa_nicole_agg_x_p
 dpa_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "y_p")
+currDictionary['y_p'] = dpa_nicole_agg_y_p
 dpa_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "z_p")
+currDictionary['z_p'] = dpa_nicole_agg_z_p
 dpa_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Dont pay Attention", "mag_p")
+currDictionary['mag_p'] = dpa_nicole_agg_mag_p
 
+currDictionary = nicole_dictionary['Flip']
 flip_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Flip", "x_p")
+currDictionary['x_p'] = flip_nicole_agg_x_p
 flip_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Flip", "y_p")
+currDictionary['y_p'] = flip_nicole_agg_y_p
 flip_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Flip", "z_p")
+currDictionary['z_p'] = flip_nicole_agg_z_p
 flip_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Flip", "mag_p")
+currDictionary['mag_p'] = flip_nicole_agg_mag_p
 
+currDictionary = nicole_dictionary['Clap']
 clap_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Clap", "x_p")
+currDictionary['x_p'] = clap_nicole_agg_x_p 
 clap_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Clap", "y_p")
+currDictionary['y_p'] = clap_nicole_agg_y_p 
 clap_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Clap", "z_p")
+currDictionary['z_p'] = clap_nicole_agg_z_p 
 clap_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Clap", "mag_p")
+currDictionary['mag_p'] = clap_nicole_agg_mag_p 
 
+currDictionary = nicole_dictionary['Elephant Arm']
 ea_nicole_agg_x_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "x_p")
+currDictionary['x_p'] = ea_nicole_agg_x_p
 ea_nicole_agg_y_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "y_p")
+currDictionary['y_p'] = ea_nicole_agg_y_p
 ea_nicole_agg_z_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "z_p")
+currDictionary['z_p'] = ea_nicole_agg_z_p
 ea_nicole_agg_mag_p = nicole_gestures.create_aggregate_signal("Elephant Arm", "mag_p")
+currDictionary['mag_p'] = ea_nicole_agg_mag_p
 
 #Create Aggregate (Rashmi)
 rashmi_gestures = get_gesture_set_with_str("Rashmi")
 print("Rashmi:", rashmi_gestures)
+rashmi_dictionary = {}
+rashmi_dictionary["pulling"] = {}
+rashmi_dictionary["Dont pay Attention"] = {}
+rashmi_dictionary["Flip"] = {}
+rashmi_dictionary['Clap'] = {}
+rashmi_dictionary['Elephant Arm'] = {}
+currDictionary = rashmi_dictionary["pulling"]
 pulling_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Pulling", "x_p")
+currDictionary['x_p'] = pulling_rashmi_agg_x_p
 pulling_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Pulling", "y_p")
+currDictionary['y_p'] = pulling_rashmi_agg_y_p
 pulling_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Pulling", "z_p")
+currDictionary['z_p'] = pulling_rashmi_agg_z_p
 pulling_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Pulling", "mag_p")
+currDictionary['mag_p'] = pulling_rashmi_agg_mag_p
 
+currDictionary = rashmi_dictionary['Dont pay Attention']
 dpa_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "x_p")
+currDictionary['x_p'] = dpa_rashmi_agg_x_p
 dpa_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "y_p")
+currDictionary['y_p'] = dpa_rashmi_agg_y_p
 dpa_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "z_p")
+currDictionary['z_p'] = dpa_rashmi_agg_z_p
 dpa_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Dont pay Attention", "mag_p")
+currDictionary['mag_p'] = dpa_rashmi_agg_mag_p
 
+currDictionary = rashmi_dictionary["Flip"]
 flip_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Flip", "x_p")
+currDictionary['x_p'] = flip_rashmi_agg_x_p
 flip_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Flip", "y_p")
+currDictionary['y_p'] = flip_rashmi_agg_y_p
 flip_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Flip", "z_p")
+currDictionary['z_p'] = flip_rashmi_agg_z_p
 flip_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Flip", "mag_p")
+currDictionary['mag_p'] = flip_rashmi_agg_mag_p
 
+currDictionary = rashmi_dictionary['Clap']
 clap_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Clap", "x_p")
+currDictionary['x_p'] = clap_rashmi_agg_x_p
 clap_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Clap", "y_p")
+currDictionary['y_p'] = clap_rashmi_agg_y_p
 clap_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Clap", "z_p")
+currDictionary['z_p'] = clap_rashmi_agg_z_p
 clap_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Clap", "mag_p")
+currDictionary['mag_p'] = clap_rashmi_agg_mag_p
 
+currDictionary = rashmi_dictionary["Elephant Arm"]
 ea_rashmi_agg_x_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "x_p")
+currDictionary['x_p'] = ea_rashmi_agg_x_p 
 ea_rashmi_agg_y_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "y_p")
+currDictionary['y_p'] = ea_rashmi_agg_y_p 
 ea_rashmi_agg_z_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "z_p")
+currDictionary['z_p'] = ea_rashmi_agg_z_p 
 ea_rashmi_agg_mag_p = rashmi_gestures.create_aggregate_signal("Elephant Arm", "mag_p")
+currDictionary['mag_p'] = ea_rashmi_agg_mag_p 
 
 def main():
 	# python serial_plotter.py --port /dev/cu.usbmodem14601
@@ -1383,16 +1446,39 @@ def main():
     print('Reading from serial port: {}'.format(str_port))
 
     # plot parameters
-
-    fig = plt.figure(figsize=(10, 5))
+    
+    fig = plt.figure(figsize=(10, 5), tight_layout=True)
+    gs = GridSpec(2, 4, figure=fig)
+    ax1 = fig.add_subplot(gs[0, :])
+    ax2 = fig.add_subplot(gs[1, 0])
+    ax2.set_ylabel("x_p")
+    ax2.set_xlabel("time")
+    #ax1.setTitle("real time gestures")
+    #ax2.setTitle("x_p comparison")
+    ax3=fig.add_subplot(gs[1, 1])
+    ax3.set_ylabel("y_p")
+    ax3.set_xlabel("time")
+    ax4=fig.add_subplot(gs[1,2])
+    ax4.set_ylabel("z_p")
+    ax4.set_xlabel("time")
+    ax5= fig.add_subplot(gs[1,3])
+    ax5.set_ylabel("mag_p")
+    ax5.set_xlabel("time")
+    #ax3.setTitle("y_p comparison")
+    #ax4.setTitle("z_p comparison")
+    #ax5.setTitle("mag_p comparison")
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
-    ax = plt.axes(ylim=(0, 1500))
-    # place a text box in upper left in axes coords
-    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-    txt = ax.text(0.05, 0.95, "Do the dance move: Pulling", transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
-    score_txt = ax.text(0.05, 0.25, "Score: ", transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
+    fig.align_labels()
+    ax1.set_ylim((0, 1500))
+    ax2.set_ylim((0, 1500))
+    ax3.set_ylim((0, 1500))
+    ax4.set_ylim((0, 1500))
+    ax5.set_ylim((0, 1500))
+    #ax = plt.axes(ax1, ylim=(0, 1500))
+    #plt.show()
 
-    accel_plot = AccelPlot(fig, ax, txt, score_txt, str_port, max_length=args.max_len)
+
+    accel_plot = AccelPlot(fig, ax1, str_port, max_length=args.max_len)
 
     # set up animation
   
@@ -1401,10 +1487,40 @@ def main():
     labels = ['x', 'y', 'z', 'mag']
     alphas = [0.8, 0.8, 0.8, 0.9]
     for i in range(0, num_vals):
-        line2d, = ax.plot([], [], label=labels[i], alpha=alphas[i])
+        line2d, = ax1.plot([1], [1], label=labels[i], alpha=alphas[i])
         lines.append(line2d)
 
-    plt.legend(loc='upper right')
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels)
+
+    xpLines = list()
+    num_vals_xp = 2
+    labels_subplotsx = ['current gesture', 'aggregate gesture']
+    labels_subplotsy = ['current gesture', 'aggregate gesture']
+    labels_subplotsz = ['current gesture', 'aggregate gesture']
+    labels_subplotsmag = ['current gesture', 'aggregate gesture']
+    alphassub = [0.8, 0.8]
+    ypLines = list()
+    zpLines = list()
+    magpLines = list()
+    for i in range(0, num_vals_xp):
+        line2dx = ax2.plot([1], [1], label=labels_subplotsx[i], alpha=alphassub[i])
+        xpLines.append(line2dx)
+        line2dy = ax3.plot([1], [1], label=labels_subplotsy[i], alpha=alphassub[i])
+        ypLines.append(line2dy)
+        line2dz = ax4.plot([1], [1], label=labels_subplotsz[i], alpha=alphassub[i])
+        zpLines.append(line2dz)
+        line2dmag = ax5.plot([1], [1], label=labels_subplotsmag[i], alpha=alphassub[i])
+        magpLines.append(line2dmag)
+
+    handles1, labels1 = ax3.get_legend_handles_labels()
+    ax2.legend(handles1, labels1)
+    handles2, labels2 = ax3.get_legend_handles_labels()
+    ax3.legend(handles2, labels2)
+    handles, labels = ax4.get_legend_handles_labels()
+    ax4.legend(handles, labels)
+    handles, labels = ax5.get_legend_handles_labels()
+    ax5.legend(handles, labels)
 
     # for more on animation function, see https://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
     anim = animation.FuncAnimation(fig, accel_plot.update,
