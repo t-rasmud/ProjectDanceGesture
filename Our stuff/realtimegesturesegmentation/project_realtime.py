@@ -950,19 +950,19 @@ class AccelPlot:
         print(len(self.alignedSignal['x_p']))
 
         currentSegment = self.alignedSignal;
-        self.plt_linesx[0].set_ydata(currentSegment['x_p'])
-        self.plt_linesy[0].set_ydata(currentSegment['y_p'])
-        self.plt_linesz[0].set_ydata(currentSegment['z_p'])
-        self.plt_linesmag[0].set_ydata(currentSegment['mag_p'])
+        self.plt_linesx[0].set_data(len(currentSegment['x_p']), currentSegment['x_p'])
+        self.plt_linesy[0].set_data(len(currentSegment['y_p']), currentSegment['y_p'])
+        self.plt_linesz[0].set_data(len(currentSegment['z_p']), currentSegment['z_p'])
+        self.plt_linesmag[0].set_data(len(currentSegment['mag_p']), currentSegment['mag_p'])
 
         bestGesture = self.bestAggregateGesture;
         print("len of best gesture result")
         print(len(bestGesture['y_p']))
         #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
-        self.plt_linesx[1].set_ydata(bestGesture['x_p'])
-        self.plt_linesy[1].set_ydata(bestGesture['y_p'])
-        self.plt_linesz[1].set_ydata(bestGesture['z_p'])
-        self.plt_linesmag[1].set_ydata(bestGesture['mag_p'])
+        self.plt_linesx[1].set_data(len(bestGesture['x_p']), bestGesture['x_p'])
+        self.plt_linesy[1].set_data(len(bestGesture['y_p']), bestGesture['y_p'])
+        self.plt_linesz[1].set_data(len(bestGesture['z_p']), bestGesture['z_p'])
+        self.plt_linesmag[1].set_data(len(bestGesture['mag_p']), bestGesture['mag_p'])
 
     # update plot
     def update(self, frameNum, args, plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag):
@@ -1204,13 +1204,13 @@ def main():
     magpLines = list()
     print("xp lines")
     for i in range(0, num_vals_xp):
-        line2dx, = ax2.plot([], label=labels_subplotsx[i], alpha=alphassub[i])
+        line2dx, = ax2.plot([], [], label=labels_subplotsx[i], alpha=alphassub[i])
         xpLines.append(line2dx)
-        line2dy, = ax3.plot([], label=labels_subplotsy[i], alpha=alphassub[i])
+        line2dy, = ax3.plot([], [], label=labels_subplotsy[i], alpha=alphassub[i])
         ypLines.append(line2dy)
-        line2dz, = ax4.plot([], label=labels_subplotsz[i], alpha=alphassub[i])
+        line2dz, = ax4.plot([], [], label=labels_subplotsz[i], alpha=alphassub[i])
         zpLines.append(line2dz)
-        line2dmag, = ax5.plot([], label=labels_subplotsmag[i], alpha=alphassub[i])
+        line2dmag, = ax5.plot([], [], label=labels_subplotsmag[i], alpha=alphassub[i])
         magpLines.append(line2dmag)
     print(xpLines)
 
