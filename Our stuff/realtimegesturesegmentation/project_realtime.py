@@ -941,6 +941,8 @@ class AccelPlot:
                 segment_result = self.segment_event()
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
+                    print("len of segment result")
+                    print(segment_result.shape[0])
 
                     currentSegment = self.alignedSignal;
                     plt_linesx[0].set_ydata(currentSegment['x_p'])
@@ -949,6 +951,8 @@ class AccelPlot:
                     plt_linesmag[0].set_ydata(segment_result['mag_p'])
 
                     bestGesture = self.bestAggregateGesture;
+                    print("len of best gesture result")
+                    print(bestGesture.shape[0])
                     #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
                     plt_linesx[1].set_ydata(bestGesture['x_p'])
                     plt_linesy[1].set_ydata(bestGesture['y_p'])
