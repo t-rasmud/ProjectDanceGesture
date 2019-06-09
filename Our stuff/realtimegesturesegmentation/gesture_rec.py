@@ -20,6 +20,7 @@ from time import sleep
 from collections import deque
 import itertools
 import math
+from matplotlib.gridspec import GridSpec
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -148,6 +149,9 @@ class AccelPlot:
                 self.window_buffer.popleft()
 
         return segment_result
+
+    #def show_subplots(self, segment_result, gestureToCompare, signalsDict):
+
     
     def classify_event(self, segment_result):
         # print("classify event", segment_result)
@@ -197,6 +201,7 @@ def main():
 	# python serial_plotter.py --port /dev/cu.usbmodem14601
 	# windows: python lserial_plotter.py --port COM5	
     # create parser
+    '''
     parser = argparse.ArgumentParser(description="Accel Serial Plotter")
 
     # add expected arguments
@@ -211,14 +216,51 @@ def main():
     str_port = str(args.port)
 
     print('Reading from serial port: {}'.format(str_port))
+    '''
 
     # plot parameters
 
-    fig = plt.figure(figsize=(10, 5))
+    fig = plt.figure(figsize=(10, 5), tight_layout=True)
+    gs = GridSpec(2, 4, figure=fig)
+    ax1 = fig.add_subplot(gs[0, :])
+    ax2 = fig.add_subplot(gs[1, 0])
+    ax2.set_ylabel("x_p")
+    ax2.set_xlabel("time")
+    #ax1.setTitle("real time gestures")
+    #ax2.setTitle("x_p comparison")
+    ax3=fig.add_subplot(gs[1, 1])
+    ax3.set_ylabel("y_p")
+    ax3.set_xlabel("time")
+    ax4=fig.add_subplot(gs[1,2])
+    ax4.set_ylabel("z_p")
+    ax4.set_xlabel("time")
+    ax5= fig.add_subplot(gs[1,3])
+    ax5.set_ylabel("mag_p")
+    ax5.set_xlabel("time")
+    #ax3.setTitle("y_p comparison")
+    #ax4.setTitle("z_p comparison")
+    #ax5.setTitle("mag_p comparison")
     #ax = plt.axes(xlim=(0, args.max_len), ylim=(0, 1023))
-    ax = plt.axes(ylim=(0, 1500))
+    fig.align_labels()
+    ax1.set_ylim((0, 1500))
+    ax2.set_ylim((0, 1500))
+    ax3.set_ylim((0, 1500))
+    ax4.set_ylim((0, 1500))
+    ax5.set_ylim((0, 1500))
+    #ax = plt.axes(ax1, ylim=(0, 1500))
+    plt.show()
 
-    accel_plot = AccelPlot(fig, ax, str_port, max_length=args.max_len)
+    '''
+    fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(nrows=2,ncols=4)
+    ax1 = plt.axes(ylim=(0, 1500))
+    ax2 = plt.axes(ylim=(0, 200))
+    ax3 = plt.axes(ylim=(0, 200))
+    ax4 = plt.axes(ylim=(0, 200))
+    ax5 = plt.axes(ylim=(0, 200))
+    '''
+
+
+    accel_plot = AccelPlot(fig, ax1, str_port, max_length=args.max_len)
 
     # set up animation
   
