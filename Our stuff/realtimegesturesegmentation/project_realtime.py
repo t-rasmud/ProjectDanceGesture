@@ -556,6 +556,7 @@ class AccelPlot:
         self.ax5 = ax5
 
         self.bestAggregateGesture = None
+        self.alignedSignal = None
 
         self.data = list()
         num_values_to_plot = 4
@@ -795,6 +796,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_rashmi_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_nicole_agg_x_p, dist=euclidean)
         nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
@@ -807,6 +809,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_nicole_y_p = signalToComparePad
         alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_nicole_agg_y_p, dist=euclidean)
         nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
@@ -819,6 +822,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_nicole_z_p = signalToComparePad
         alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # nicole_dist_z_p, path = fastdtw(alignedSignal_z_p, pulling_nicole_agg_z_p, dist=euclidean)
         nicole_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
@@ -831,6 +835,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_nicole_mag_p = signalToComparePad
         alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # nicole_dist_mag_p, path = fastdtw(alignedSignal_mag_p, pulling_nicole_agg_mag_p, dist=euclidean)
         nicole_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
@@ -846,6 +851,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_rashmi_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # rashmi_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_rashmi_agg_x_p, dist=euclidean)
         rashmi_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
@@ -858,6 +864,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_rashmi_y_p = signalToComparePad
         alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # rashmi_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_rashmi_agg_y_p, dist=euclidean)
         rashmi_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
@@ -870,6 +877,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_rashmi_z_p = signalToComparePad
         alignedSignal_z_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # rashmi_dist_z_p, path = fastdtw(alignedSignal_z_p, pulling_rashmi_agg_z_p, dist=euclidean)
         rashmi_euclid_distance_z = distance.euclidean(alignedSignal_z_p, signalToComparePad)
@@ -882,6 +890,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+        signalToCompare_padded_rashmi_mag_p = signalToComparePad
         alignedSignal_mag_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         # rashmi_dist_mag_p, path = fastdtw(alignedSignal_mag_p, pulling_rashmi_agg_mag_p, dist=euclidean)
         rashmi_euclid_distance_mag = distance.euclidean(alignedSignal_mag_p, signalToComparePad)
@@ -889,24 +898,31 @@ class AccelPlot:
         # score_comp_to_rashmi = rashmi_dist_x_p + rashmi_dist_y_p + rashmi_dist_z_p + rashmi_dist_mag_p
         score_comp_to_rashmi = rashmi_euclid_distance_x + rashmi_euclid_distance_y + rashmi_euclid_distance_z + rashmi_euclid_distance_mag
 
+        self.alignedSignal = {
+            'x_p': alignedSignal_x_p,
+            'y_p': alignedSignal_y_p,
+            'z_p': alignedSignal_z_p,
+            'mag_p':alignedSignal_mag_p
+        }
         if score_comp_to_nicole < score_comp_to_rashmi:
             print("Matched with Nicole")
             print(score_comp_to_nicole)
             self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
-            self.bestAggregateGesture = {"x_p":signalToCompare_nicole_x_p,
-                "y_p":signalToCompare_nicole_y_p,
-                "z_p":signalToCompare_nicole_z_p,
-                "mag_p":signalToCompare_nicole_mag_p
+            self.bestAggregateGesture = {
+                "x_p":signalToCompare_padded_nicole_x_p,
+                "y_p":signalToCompare_padded_nicole_y_p,
+                "z_p":signalToCompare_padded_nicole_z_p,
+                "mag_p":signalToCompare_padded_nicole_mag_p
             }
             
         else:
             print("Matched with Rashmi")
             print(score_comp_to_rashmi)
             self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
-            self.bestAggregateGesture = {"x_p":signalToCompare_rashmi_x_p,
-                "y_p":signalToCompare_rashmi_y_p,
-                "z_p":signalToCompare_rashmi_z_p,
-                "mag_p":signalToCompare_rashmi_mag_p
+            self.bestAggregateGesture = {"x_p":signalToCompare_rashmi_padded_x_p,
+                "y_p":signalToCompare_rashmi_padded_y_p,
+                "z_p":signalToCompare_rashmi_padded_z_p,
+                "mag_p":signalToCompare_rashmi_padded_mag_p
             }
         self.event_counter = (self.event_counter + 1) % 5
         self.txt.set_text(next_move)
@@ -926,17 +942,18 @@ class AccelPlot:
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
 
-                    plt_linesx[0].set_data(segment_result['time'], segment_result['x_p'])
-                    plt_linesy[0].set_data(segment_result['time'], segment_result['y_p'])
-                    plt_linesz[0].set_data(segment_result['time'], segment_result['z_p'])
-                    plt_linesmag[0].set_data(segment_result['time'], segment_result['mag_p'])
+                    currentSegment = self.alignedSignal;
+                    plt_linesx[0].set_data(currentSegment['x_p'])
+                    plt_linesy[0].set_data(currentSegment['y_p'])
+                    plt_linesz[0].set_data(currentSegment['z_p')
+                    plt_linesmag[0].set_data(segment_result['mag_p'])
 
                     bestGesture = self.bestAggregateGesture;
-                    longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
-                    plt_linesx[1].set_data(bestGesture['time'], bestGesture['x_p'])
-                    plt_linesy[1].set_data(bestGesture['time'], bestGesture['y_p'])
-                    plt_linesz[1].set_data(bestGesture['time'], bestGesture['z_p'])
-                    plt_linesmag[1].set_data(bestGesture['time'], bestGesture['mag_p'])
+                    #longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
+                    plt_linesx[1].set_data(bestGesture['x_p'])
+                    plt_linesy[1].set_data(bestGesture['y_p'])
+                    plt_linesz[1].set_data(bestGesture['z_p'])
+                    plt_linesmag[1].set_data(bestGesture['mag_p'])
 
                 # plot the data
                 for i in range(0, len(plt_lines)):
