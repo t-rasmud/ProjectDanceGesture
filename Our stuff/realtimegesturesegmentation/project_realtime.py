@@ -10,6 +10,7 @@ import itertools
 from os import listdir
 import ntpath
 import os
+from matplotlib.gridspec import GridSpec
 
 import sys, serial, argparse
 from time import sleep
@@ -680,6 +681,23 @@ class AccelPlot:
                 self.window_buffer.popleft()
 
         return segment_result
+    
+    def graphComparison(self, segment_result, gesture_name, 
+                        gestureDictionary, plt_lines_xp, plt_lines_yp, 
+                        plt_lines_zp, plt_lines_magp):
+        aggGesture = gestureDictionary[gesture_name]
+        aggGesturex = aggGesture['x_p']
+        aggGesturey = aggGesture['y_p']
+        aggGesturez = aggGesture['z_p']
+        aggGesturemag = aggGesture['mag_p']
+        t = segment_result['time']
+        x_p = segment_result['x_p']
+        y_p = segment_result['y_p']
+        z_p = segment_result['z_p']
+        mag_p = segment_result['mag_p']
+        for i in range(len(plt_lines_xp)):
+            
+
     
     def classify_event(self, segment_result):
         # print("classify event", segment_result)
