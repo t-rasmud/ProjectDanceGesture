@@ -1309,12 +1309,18 @@ class AccelPlot:
                 segment_result = self.segment_event()
                 if segment_result != None:
                     cls_result = self.classify_event(segment_result)
+
                     plt_linesx[0].set_data(segment_result['time'], segment_result['x_p'])
                     plt_linesy[0].set_data(segment_result['time'], segment_result['y_p'])
                     plt_linesz[0].set_data(segment_result['time'], segment_result['z_p'])
                     plt_linesmag[0].set_data(segment_result['time'], segment_result['mag_p'])
 
-                    bestGesture = self.bestGesture;
+                    bestGesture = self.bestAggregateGesture;
+                    longest = max(segment_result['time'][-1] - segment_result['time'][0], bestGesture['time'][-1])
+                    plt_linesx[1].set_data(bestGesture['time'], bestGesture['x_p'])
+                    plt_linesy[1].set_data(bestGesture['time'], bestGesture['y_p'])
+                    plt_linesz[1].set_data(bestGesture['time'], bestGesture['z_p'])
+                    plt_linesmag[1].set_data(bestGesture['time'], bestGesture['mag_p'])
 
                 # plot the data
                 for i in range(0, len(plt_lines)):
