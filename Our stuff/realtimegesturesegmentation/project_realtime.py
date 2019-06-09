@@ -948,7 +948,7 @@ class AccelPlot:
                     plt_linesx[0].set_ydata(currentSegment['x_p'])
                     plt_linesy[0].set_ydata(currentSegment['y_p'])
                     plt_linesz[0].set_ydata(currentSegment['z_p'])
-                    plt_linesmag[0].set_ydata(segment_result['mag_p'])
+                    plt_linesmag[0].set_ydata(currentSegment['mag_p'])
 
                     bestGesture = self.bestAggregateGesture;
                     print("len of best gesture result")
