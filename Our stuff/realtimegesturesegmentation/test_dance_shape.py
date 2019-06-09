@@ -1237,6 +1237,111 @@ def train_part_with_leave_one_out():
     plot_confusion_matrix(cm, classes=sorted_gesture_names, title="Scaled RFE test score: {:.3f}".format(score))
     plt.show()
 
+def leave_one_out_shape_matching():
+    selected_gesture_set = get_gesture_set_with_str("Combined")
+    trialList = selected_gesture_set.get_all_trials();
+    listOfVals = list()
+    for i in range(len(trialList)):
+        trial = trialList[i]
+        listOfVals.append([trial.gesture_name, trial])
+    columnNames = ["gesture name", "trial"]
+    df = pd.DataFrame(listOfVals, columns=columnNames)
+    X = df 
+    y = df.pop('gesture name')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, stratify=y) # random_state=42
+
+    attributeNames = ["x", "y", "z", "mag", "x_p", "y_p", "z_p", "mag_p"]
+    
+    #looking at results for training
+    numberOfMistakesTrain = 0
+    totalGesturesInTrain = 0; 
+    for i in range(len(X_train)):
+        trial = X_train[i]
+        sortedGestureNames = selected_gesture_set.get_gesture_names_sorted()
+        minScore = -1
+        bestGesture = None
+        predictDict = {}
+        for name in sortedGestureNames:
+            bestGestureScore = -1
+            for j in range(len(X_train)):
+                score = 0
+                gesture = X_train[j];
+                for attr in attributeNames:
+                    signalToCompare = np.array(getattr(gesture.accel, attr))
+                    currentSignal = np.array(getattr(trial.accel, attr));
+                    signalToComparePad = signalToCompare
+                    currentSignalPad = currentSignal
+                    if signalToCompare.shape[0] < currentSignal.shape[0]:
+                        signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    else:
+                        currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
+                    score = score + distance.euclidean(alignedSignal, signalToComparePad)
+                if score < bestGestureScore or bestGestureScore == -1:
+                    bestGestureScore = score
+            if bestGestureScore < minScore or minScore == -1:
+                minScore = bestGestureScore
+                bestGesture = name
+            predictDict[name] = bestGestureScore
+        minPredictedDictVal = -1;
+        gesturePredicted = None
+        for name in predictedDict:
+            if predictedDict[name] < minPredictedDictVal or minPredictedDictVal == -1:
+                minPredictedDictVal = predictedDict[name]
+                gesturePredicted = name
+        totalGesturesInTrain += 1
+        if y_test[i] != gesturePredicted:
+            numberOfMistakesTrain += 1
+    
+    print("accuracy rate for training", numberOfMistakesTrain/totalGesturesInTrain);
+    print("total gestures in train", totalGesturesInTrain)
+
+    numberOfMistakes = 0
+    totalGesturesInTest = 0; 
+
+    #looking at results for testing 
+    for i in range(len(X_test)):
+        trial = X_test[i]
+        sortedGestureNames = selected_gesture_set.get_gesture_names_sorted()
+        minScore = -1
+        bestGesture = None
+        predictDict = {}
+        for name in sortedGestureNames:
+            bestGestureScore = -1
+            for j in range(len(X_train)):
+                score = 0
+                gesture = X_train[j];
+                for attr in attributeNames:
+                    signalToCompare = np.array(getattr(gesture.accel, attr))
+                    currentSignal = np.array(getattr(trial.accel, attr));
+                    signalToComparePad = signalToCompare
+                    currentSignalPad = currentSignal
+                    if signalToCompare.shape[0] < currentSignal.shape[0]:
+                        signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    else:
+                        currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+                    alignedSignal = get_aligned_signal(currentSignalPad, signalToComparePad)
+                    score = score + distance.euclidean(alignedSignal, signalToComparePad)
+                if score < bestGestureScore or bestGestureScore == -1:
+                    bestGestureScore = score
+            if bestGestureScore < minScore or minScore == -1:
+                minScore = bestGestureScore
+                bestGesture = name
+            predictDict[name] = bestGestureScore
+        minPredictedDictVal = -1;
+        gesturePredicted = None
+        for name in predictedDict:
+            if predictedDict[name] < minPredictedDictVal or minPredictedDictVal == -1:
+                minPredictedDictVal = predictedDict[name]
+                gesturePredicted = name
+        totalGesturesInTest += 1
+        if y_test[i] != gesturePredicted:
+            numberOfMistakes += 1
+
+    print("accuracy rate for testing", numberOfMistakesTrain/totalGesturesInTrain);
+    print("total gestures in test", totalGesturesInTrain)
+
+
 #100 percecnt
 def train_part_with_leave_one_out_all():
     selected_gesture_set = get_gesture_set_with_str("Combined")
@@ -1807,6 +1912,8 @@ class AccelPlot:
 
 # main() function
 def main():
+    leave_one_out_shape_matching();
+    '''
     #get trained model
     #train_part_with_leave_one_out();
     #train_part_with_leave_one_out_all()
@@ -1865,6 +1972,7 @@ def main():
     accel_plot.close()
 
     print('Exiting...')
+    '''
 
 # call main
 if __name__ == '__main__':
