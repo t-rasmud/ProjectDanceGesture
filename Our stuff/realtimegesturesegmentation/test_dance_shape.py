@@ -1612,7 +1612,7 @@ class AccelPlot:
             for gesture in self.gestureSet.get_trials_for_gesture(name):
                 score = 0
                 for attr in self.aggregateGestureDictionary[name]:
-                    signalToCompare = gesture.accel
+                    signalToCompare = np.array[getattr(gesture.accel, attr)]
                     currentSignal = np.array(segment_result[attr]);
                     signalToComparePad = signalToCompare
                     currentSignalPad = currentSignal
