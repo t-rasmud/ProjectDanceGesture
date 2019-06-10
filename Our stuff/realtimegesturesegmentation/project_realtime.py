@@ -799,7 +799,7 @@ class AccelPlot:
         if signalToCompare.shape[0] < currentSignal.shape[0]:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
-            currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            currentSignalPad = np.pad(currentSignal, (abs(signalToCompare.shape[0] - currentSignal.shape[0]), 0), 'mean')
         signalToCompare_padded_nicole_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         alignedSignal_nicole_x_p = alignedSignal_x_p
@@ -847,7 +847,7 @@ class AccelPlot:
         if signalToCompare.shape[0] < currentSignal.shape[0]:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
-            currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            currentSignalPad = np.pad(currentSignal, (abs(signalToCompare.shape[0] - currentSignal.shape[0]), 0), 'mean')
         signalToCompare_padded_nicole_mag_p = signalToComparePad
         alignedSignal_mag_p = get_aligned_signal(currentSignalPad, signalToComparePad)
         alignedSignal_nicole_mag_p = alignedSignal_mag_p
@@ -864,7 +864,7 @@ class AccelPlot:
         if signalToCompare.shape[0] < currentSignal.shape[0]:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
-            currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            currentSignalPad = np.pad(currentSignal, (abs(signalToCompare.shape[0] - currentSignal.shape[0]), 0), 'mean')
         signalToCompare_padded_rashmi_x_p = signalToComparePad
         alignedSignal_x_p = get_aligned_signal(currentSignalPad, signalToComparePad)
         alignedSignal_rashmi_x_p = alignedSignal_x_p
@@ -912,7 +912,7 @@ class AccelPlot:
         if signalToCompare.shape[0] < currentSignal.shape[0]:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
-            currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
+            currentSignalPad = np.pad(currentSignal, (abs(signalToCompare.shape[0] - currentSignal.shape[0]), 0), 'mean')
         signalToCompare_padded_rashmi_mag_p = signalToComparePad
         alignedSignal_mag_p = get_aligned_signal(currentSignalPad, signalToComparePad)
         alignedSignal_rashmi_mag_p = alignedSignal_mag_p
