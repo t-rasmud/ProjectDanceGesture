@@ -949,16 +949,27 @@ class AccelPlot:
 
         currentSegment = self.alignedSignal;
         linesx = self.ax2.lines;
-        print(linesx)
+        
         self.ax2.lines.remove(self.ax2.lines[1])
         self.ax2.lines.remove(self.ax2.lines[0])
         self.ax2.plot(currentSegment['x_p'], label="current gesture", alpha=0.8, color='tab:blue')
         self.ax2.plot(self.bestAggregateGesture['x_p'], label="aggregate gesture", alpha=0.8, color='tab:orange')
         
+        self.ax3.lines.remove(self.ax3.lines[1])
+        self.ax3.lines.remove(self.ax3.lines[0])
         self.ax3.plot(currentSegment['y_p'], label="current gesture", alpha=0.8, color='tab:blue')
-        self.ax4.plot(self.bestAggregateGesture['y_p'], label="aggregate gesture", alpha=0.8, color='tab:orange')
+        self.ax3.plot(self.bestAggregateGesture['y_p'], label="aggregate gesture", alpha=0.8, color='tab:orange')
         
-        print(linesx)
+        self.ax4.lines.remove(self.ax4.lines[1])
+        self.ax4.lines.remove(self.ax4.lines[0])
+        self.ax4.plot(currentSegment['z_p'], label="current gesture", alpha=0.8, color='tab:blue')
+        self.ax4.plot(self.bestAggregateGesture['z_p'], label="aggregate gesture", alpha=0.8, color='tab:orange')
+        
+        self.ax5.lines.remove(self.ax5.lines[1])
+        self.ax5.lines.remove(self.ax5.lines[0])
+        self.ax5.plot(currentSegment['mag_p'], label="current gesture", alpha=0.8, color='tab:blue')
+        self.ax5.plot(self.bestAggregateGesture['mag_p'], label="aggregate gesture", alpha=0.8, color='tab:orange')
+        
         #linesx = plt_linesx[0].set_data(len(currentSegment['x_p']))
         self.plt_linesx[0].set_data(len(currentSegment['x_p']), currentSegment['x_p'])
         self.plt_linesy[0].set_data(len(currentSegment['y_p']), currentSegment['y_p'])
