@@ -966,6 +966,11 @@ class AccelPlot:
 
         self.ax2.set_xlim(0, len(currentSegment['x_p']))
         self.ax3.set_xlim(0, len(currentSegment['y_p']))
+
+        handles1, labels1 = ax2.get_legend_handles_labels()
+        print(handles1)
+        for val in handles1:
+            print(val)
         self.fig.canvas.draw()
 
     # update plot
@@ -1220,7 +1225,7 @@ def main():
 
     accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, ax2, ax3, ax4, ax5, xpLines, ypLines, zpLines, magpLines, max_length=args.max_len)
 
-    handles1, labels1 = ax3.get_legend_handles_labels()
+    handles1, labels1 = ax2.get_legend_handles_labels()
     ax2.legend(handles1, labels1)
     handles2, labels2 = ax3.get_legend_handles_labels()
     ax3.legend(handles2, labels2)
