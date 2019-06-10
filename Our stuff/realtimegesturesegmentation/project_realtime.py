@@ -931,7 +931,8 @@ class AccelPlot:
             print("Matched with Rashmi")
             print(score_comp_to_rashmi)
             self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
-            self.bestAggregateGesture = {"x_p":signalToCompare_rashmi_padded_x_p,
+            self.bestAggregateGesture = {
+                "x_p": signalToCompare_padded_rashmi_x_p,
                 "y_p":signalToCompare_rashmi_padded_y_p,
                 "z_p":signalToCompare_rashmi_padded_z_p,
                 "mag_p":signalToCompare_rashmi_padded_mag_p
