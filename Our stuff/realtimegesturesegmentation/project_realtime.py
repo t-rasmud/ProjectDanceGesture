@@ -950,8 +950,8 @@ class AccelPlot:
         currentSegment = self.alignedSignal;
         linesx = self.ax2.lines;
         print(linesx)
-        self.ax2.lines.remove(self.ax2.lines[0])
         self.ax2.lines.remove(self.ax2.lines[1])
+        self.ax2.lines.remove(self.ax2.lines[0])
         self.ax2.plot(currentSegment['x_p'], label="current gesture", alpha=0.8, color='tab:blue')
         self.ax2.plot(self.bestAggregateGesture['x_p'], label="aggregate gesture", alpha=0.8, color='tab:orange')
         
