@@ -1212,8 +1212,9 @@ def main():
     zpLines = list()
     magpLines = list()
     print("xp lines")
+    ax2.set_xlim(0, len(flip_rashmi_agg_x_p))
     for i in range(0, num_vals_xp):
-        line2dx, = ax2.plot([], [], label=labels_subplotsx[i], alpha=alphassub[i])
+        line2dx, = ax2.plot(len(flip_rashmi_agg_x_p), flip_rashmi_agg_x_p, label=labels_subplotsx[i], alpha=alphassub[i])
         xpLines.append(line2dx)
         line2dy, = ax3.plot([], [], label=labels_subplotsy[i], alpha=alphassub[i])
         ypLines.append(line2dy)
@@ -1222,6 +1223,8 @@ def main():
         line2dmag, = ax5.plot([], [], label=labels_subplotsmag[i], alpha=alphassub[i])
         magpLines.append(line2dmag)
     print(xpLines)
+
+    
 
     accel_plot = AccelPlot(fig, ax1, txt, score_txt, str_port, ax2, ax3, ax4, ax5, xpLines, ypLines, zpLines, magpLines, max_length=args.max_len)
 
