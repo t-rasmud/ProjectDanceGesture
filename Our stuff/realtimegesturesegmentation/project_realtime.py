@@ -1207,6 +1207,7 @@ def main():
     print("xp lines")
     for i in range(0, num_vals_xp):
         line2dx, = ax2.plot([1, 1, 2], [2, 3, 4], label=labels_subplotsx[i], alpha=alphassub[i])
+        ax2.set_xlim(-3, 6)
         xpLines.append(line2dx)
         line2dy, = ax3.plot([], [], label=labels_subplotsy[i], alpha=alphassub[i])
         ypLines.append(line2dy)
