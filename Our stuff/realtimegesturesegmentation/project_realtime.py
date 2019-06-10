@@ -801,7 +801,7 @@ class AccelPlot:
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_nicole_x_p = signalToComparePad
-        alignedSignal_x_p = get_aligned_signal(currentSignalPad, signalToComparePad)
+        alignedSignal_x_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         alignedSignal_nicole_x_p = alignedSignal_x_p
         # nicole_dist_x_p, path = fastdtw(alignedSignal_x_p, pulling_nicole_agg_x_p, dist=euclidean)
         nicole_euclid_distance_x = distance.euclidean(alignedSignal_x_p, signalToComparePad)
@@ -815,7 +815,7 @@ class AccelPlot:
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         signalToCompare_padded_nicole_y_p = signalToComparePad
-        alignedSignal_y_p = get_aligned_signal(currentSignalPad, signalToComparePad)
+        alignedSignal_y_p = get_aligned_signal_cutoff_and_pad(currentSignalPad, signalToComparePad)
         alignedSignal_nicole_y_p = alignedSignal_y_p
         # nicole_dist_y_p, path = fastdtw(alignedSignal_y_p, pulling_nicole_agg_y_p, dist=euclidean)
         nicole_euclid_distance_y = distance.euclidean(alignedSignal_y_p, signalToComparePad)
