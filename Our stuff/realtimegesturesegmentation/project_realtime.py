@@ -1,4 +1,8 @@
-# This cell includes the major classes used in our classification analyses
+# Many parts of the code have been inspired from Jon's code in A3, A4 and other
+# Jupyter notebooks used for instruction in class.
+# https://github.com/jonfroehlich/CSE599Sp2019/tree/master/Assignments
+# https://github.com/jonfroehlich/CSE599Sp2019/tree/master/Notebooks
+
 import matplotlib.pyplot as plt # needed for plotting
 import numpy as np # numpy is primary library for numeric array (and matrix) handling
 import scipy as sp
@@ -710,7 +714,11 @@ class AccelPlot:
         y_p = segment_result['y_p']
         z_p = segment_result['z_p']
         mag_p = segment_result['mag_p']
-            
+
+    # Instructs a user to perform a gesture (dance move) and 
+    # performs a shape matching of the segmented event with the aggregates
+    # of pre-recorded gesture sets for that gesture. Uses euclidean distance 
+    # to provide a score for the dance move.        
     def classify_event(self, segment_result):
         # print("classify event", segment_result)
         t = segment_result['time']
@@ -925,7 +933,11 @@ class AccelPlot:
         if score_comp_to_nicole < score_comp_to_rashmi:
             print("Matched with Nicole")
             print(score_comp_to_nicole)
-            self.score_txt.set_text("Score: " + str(score_comp_to_nicole))
+            if score_comp_to_nicole < 35000:
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole) + "\n" + "Level: Expert")
+            else:
+                self.score_txt.set_text("Score: " + str(score_comp_to_nicole) + "\n" + "Level: Novice")
+            
             self.bestAggregateGesture = {
                 "x_p":signalToCompare_padded_nicole_x_p,
                 "y_p":signalToCompare_padded_nicole_y_p,
@@ -942,7 +954,10 @@ class AccelPlot:
         else:
             print("Matched with Rashmi")
             print(score_comp_to_rashmi)
-            self.score_txt.set_text("Score: " + str(score_comp_to_rashmi))
+            if score_comp_to_rashmi < 35000:
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi) + "\n" + "Level: Expert")
+            else:
+                self.score_txt.set_text("Score: " + str(score_comp_to_rashmi) + "\n" + "Level: Novice")
             self.bestAggregateGesture = {
                 "x_p": signalToCompare_padded_rashmi_x_p,
                 "y_p":signalToCompare_padded_rashmi_y_p,
@@ -1209,7 +1224,7 @@ def main():
     # place a text box in upper left in axes coords
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     txt = ax1.text(0.05, 0.95, "Do the dance move: Pulling", transform=ax1.transAxes, fontsize=10, verticalalignment='top', bbox=props)
-    score_txt = ax1.text(0.05, 0.25, "Score: ", transform=ax1.transAxes, fontsize=10, verticalalignment='top', bbox=props)
+    score_txt = ax1.text(0.05, 0.25, "Score: \n Level: ", transform=ax1.transAxes, fontsize=10, verticalalignment='top', bbox=props)
 
     fig.align_labels()
     ax1.set_ylim((0, 1500))
