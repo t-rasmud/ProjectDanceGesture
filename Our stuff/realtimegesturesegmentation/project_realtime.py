@@ -828,7 +828,7 @@ class AccelPlot:
             signalToComparePad = np.pad(signalToCompare, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
         else:
             currentSignalPad = np.pad(currentSignal, (0, abs(signalToCompare.shape[0] - currentSignal.shape[0])), 'mean')
-         meanOfCurrentSignal = currentSignalPad.mean()
+        meanOfCurrentSignal = currentSignalPad.mean()
         meanOfSignalToComparePad = signalToComparePad.mean()
         if meanOfCurrentSignal > meanOfSignalToComparePad:
             currentSignalPad = currentSignalPad - np.tile(meanOfSignalToComparePad, currentSignalPad.shape[0])
