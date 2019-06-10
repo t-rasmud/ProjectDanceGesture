@@ -710,8 +710,6 @@ class AccelPlot:
         z_p = segment_result['z_p']
         mag_p = segment_result['mag_p']
             
-
-    
     def classify_event(self, segment_result):
         # print("classify event", segment_result)
         t = segment_result['time']
@@ -950,8 +948,10 @@ class AccelPlot:
         print(len(self.alignedSignal['x_p']))
 
         currentSegment = self.alignedSignal;
-        self.plt_linesx[0].set_data(len(currentSegment['x_p']), currentSegment['x_p'])
-        self.plt_linesy[0].set_data(len(currentSegment['y_p']), currentSegment['y_p'])
+        linesx = self.ax2.lines;
+        #linesx = plt_linesx[0].set_data(len(currentSegment['x_p']))
+        self.plt_linesx[0].set_data(np.array(currentSegment['x_p']))
+        self.plt_linesy[0].set_data(np.array(currentSegment['y_p']))
         self.plt_linesz[0].set_data(len(currentSegment['z_p']), currentSegment['z_p'])
         self.plt_linesmag[0].set_data(len(currentSegment['mag_p']), currentSegment['mag_p'])
 
