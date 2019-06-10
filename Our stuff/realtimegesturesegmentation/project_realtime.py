@@ -1212,7 +1212,7 @@ def main():
     zpLines = list()
     magpLines = list()
     print("xp lines")
-    ax2.set_xlim(0, len(flip_rashmi_agg_x_p))
+    ax2.set_xlim(0, flip_rashmi_agg_x_p.shape[0])
     for i in range(0, num_vals_xp):
         line2dx, = ax2.plot(len(flip_rashmi_agg_x_p), flip_rashmi_agg_x_p, label=labels_subplotsx[i], alpha=alphassub[i])
         xpLines.append(line2dx)
