@@ -833,7 +833,7 @@ class AccelPlot:
         if meanOfCurrentSignal > meanOfSignalToComparePad:
             currentSignalPad = currentSignalPad - np.tile(meanOfSignalToComparePad, currentSignalPad.shape[0])
         else:
-            meanOfSignalToComparePad = signalToComparePad - np.tile(meanOfCurrentSignal, signalToComparePad.shape[0])
+            signalToComparePad = signalToComparePad - np.tile(meanOfCurrentSignal, signalToComparePad.shape[0])
         signalToCompare_padded_nicole_z_p = signalToComparePad
         alignedSignal_z_p = get_aligned_signal(currentSignalPad, signalToComparePad)
         alignedSignal_nicole_z_p = alignedSignal_z_p
@@ -898,7 +898,7 @@ class AccelPlot:
         if meanOfCurrentSignal > meanOfSignalToComparePad:
             currentSignalPad = currentSignalPad - np.tile(meanOfSignalToComparePad, currentSignalPad.shape[0])
         else:
-            meanOfSignalToComparePad = signalToComparePad - np.tile(meanOfCurrentSignal, signalToComparePad.shape[0])
+            signalToComparePad = signalToComparePad - np.tile(meanOfCurrentSignal, signalToComparePad.shape[0])
         signalToCompare_padded_rashmi_z_p = signalToComparePad
         alignedSignal_z_p = get_aligned_signal(currentSignalPad, signalToComparePad)
         alignedSignal_rashmi_z_p = alignedSignal_z_p
