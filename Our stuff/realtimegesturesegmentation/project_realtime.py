@@ -949,9 +949,12 @@ class AccelPlot:
 
         currentSegment = self.alignedSignal;
         linesx = self.ax2.lines;
+        print(linesx)
+        self.ax2.plot(currentSegment['x_p'], label="try", alpha=0.8)
+        print(linesx)
         #linesx = plt_linesx[0].set_data(len(currentSegment['x_p']))
-        self.plt_linesx[0].set_ydata(np.array(currentSegment['x_p']))
-        self.plt_linesy[0].set_ydata(np.array(currentSegment['y_p']))
+        self.plt_linesx[0].set_data(len(currentSegment['x_p']), currentSegment['x_p'])
+        self.plt_linesy[0].set_data(len(currentSegment['y_p']), currentSegment['y_p'])
         self.plt_linesz[0].set_data(len(currentSegment['z_p']), currentSegment['z_p'])
         self.plt_linesmag[0].set_data(len(currentSegment['mag_p']), currentSegment['mag_p'])
 
