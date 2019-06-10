@@ -963,6 +963,9 @@ class AccelPlot:
         self.plt_linesy[1].set_data(len(bestGesture['y_p']), bestGesture['y_p'])
         self.plt_linesz[1].set_data(len(bestGesture['z_p']), bestGesture['z_p'])
         self.plt_linesmag[1].set_data(len(bestGesture['mag_p']), bestGesture['mag_p'])
+
+        self.ax2.set_xlim(0, len(currentSegment['x_p']))
+        self.ax3.set_xlim(0, len(currentSegment['y_p']))
         self.fig.canvas.draw()
 
     # update plot
@@ -992,7 +995,6 @@ class AccelPlot:
         #     print('Error '+ str(e))
 
         #return a0,
-        self.fig.canvas.draw()
         return plt_lines, plt_linesx, plt_linesy, plt_linesz, plt_linesmag
 
     # clean up
@@ -1206,8 +1208,7 @@ def main():
     magpLines = list()
     print("xp lines")
     for i in range(0, num_vals_xp):
-        line2dx, = ax2.plot([1, 1, 2], [2, 3, 4], label=labels_subplotsx[i], alpha=alphassub[i])
-        ax2.set_xlim(-3, 6)
+        line2dx, = ax2.plot([], [], label=labels_subplotsx[i], alpha=alphassub[i]
         xpLines.append(line2dx)
         line2dy, = ax3.plot([], [], label=labels_subplotsy[i], alpha=alphassub[i])
         ypLines.append(line2dy)
