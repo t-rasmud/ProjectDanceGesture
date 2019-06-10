@@ -967,7 +967,7 @@ class AccelPlot:
         self.ax2.set_xlim(0, len(currentSegment['x_p']))
         self.ax3.set_xlim(0, len(currentSegment['y_p']))
 
-        handles1, labels1 = ax2.get_legend_handles_labels()
+        handles1, labels1 = self.ax2.get_legend_handles_labels()
         print(handles1)
         for val in handles1:
             print(val)
