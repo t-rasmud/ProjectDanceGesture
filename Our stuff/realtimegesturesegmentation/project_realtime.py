@@ -452,6 +452,7 @@ def get_aligned_signal(a, b):
 # Returns a shifted signal of a based on cross correlation and padding
 def get_aligned_signal_cutoff_and_pad(a, b):
     corr = signal.correlate(a, b, mode='full')
+    print(np.argmax(corr))
     index_shift = len(a) - np.argmax(corr)
     index_shift_abs = abs(index_shift - 1)
     a_shifted_cutoff = None
